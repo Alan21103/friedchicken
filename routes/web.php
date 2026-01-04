@@ -17,6 +17,19 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
+// Middleware auth.custom untuk memisahkan 3 Role
+Route::middleware('auth.custom:kasir')->group(function () {
+    Route::get('/kasir', function () {
+        return view('kasir.index');
+    })->name('kasir.index');
+});
+
+Route::middleware('auth.custom:dapur')->group(function () {
+    Route::get('/dapur', function () {
+        return view('dapur.index');
+    })->name('dapur.index');
+});
+
 /**
  * Grup Route Khusus Owner
  */
