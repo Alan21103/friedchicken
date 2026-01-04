@@ -24,10 +24,13 @@ Route::middleware('auth.custom:kasir')->group(function () {
     })->name('kasir.index');
 });
 
+// DAPUR //
+
+// Grouping Route Dapur (Gunakan Controller agar data dummy muncul)
 Route::middleware('auth.custom:dapur')->group(function () {
-    Route::get('/dapur', function () {
-        return view('dapur.index');
-    })->name('dapur.index');
+    // Arahkan ke Controller, bukan ke view langsung
+    Route::get('/dapur', [DapurController::class, 'index'])->name('dapur.index');
+    Route::get('/dapur/stok', [DapurController::class, 'stok'])->name('dapur.stok');
 });
 
 /**
