@@ -17,4 +17,29 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Halaman utama tetap ke Login
+Route::get('/', function () {
+    return view('auth.login');
+});
+
+// Middleware auth.custom untuk memisahkan 3 Role
+Route::middleware('auth.custom:kasir')->group(function () {
+    Route::get('/kasir', function () {
+        return view('kasir.index');
+    })->name('kasir.index');
+});
+
+Route::middleware('auth.custom:dapur')->group(function () {
+    Route::get('/dapur', function () {
+        return view('dapur.index');
+    })->name('dapur.index');
+});
+
+Route::middleware('auth.custom:owner')->group(function () {
+    Route::get('/owner', function () {
+        return view('owner.index');
+    })->name('owner.index');
+});
+
+// Pastikan menyertakan file auth.php dari Breeze untuk proses Login/Logout
 require __DIR__.'/auth.php';
