@@ -22,13 +22,37 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(Request $request)
     {
-        $request->authenticate();
+        // 1. Data Dummy User (Ganti Database)
+        $dummyUsers = [
+            'owner@owner.com' => ['password' => 'owner123', 'role' => 'owner', 'name' => 'Owner MFC'],
+            'kasir@kasir.com' => ['password' => 'kasir123', 'role' => 'kasir', 'name' => 'Kasir Utama'],
+            'dapur@dapur.com' => ['password' => 'dapur123', 'role' => 'dapur', 'name' => 'Chef Dapur'],
+        ];
 
-        $request->session()->regenerate();
+        $email = $request->email;
+        $password = $request->password;
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // 2. Cek apakah email ada di dummy data & password cocok
+        if (isset($dummyUsers[$email]) && $dummyUsers[$email]['password'] === $password) {
+
+            // 3. Simpan data ke SESSION (Bukan Auth Guard)
+            session([
+                'user_logged_in' => true,
+                'user_role' => $dummyUsers[$email]['role'],
+                'user_name' => $dummyUsers[$email]['name']
+            ]);
+
+            // 4. Redirect sesuai role
+            return match ($dummyUsers[$email]['role']) {
+                'owner' => redirect('/owner'),
+                'dapur' => redirect('/dapur'),
+                'kasir' => redirect('/kasir'),
+            };
+        }
+
+        return back()->withErrors(['email' => 'Email atau password dummy salah!']);
     }
 
     /**
@@ -36,10 +60,11 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        Auth::guard('web')->logout();
+        // Hapus semua data session dummy
+        $request->session()->forget(['user_logged_in', 'user_role', 'user_name']);
 
+        // Opsional: Bersihkan semua session untuk keamanan prototype
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
 
         return redirect('/');
