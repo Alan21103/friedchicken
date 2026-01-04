@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DapurController;
 use Illuminate\Support\Facades\Route;
 
 /*
