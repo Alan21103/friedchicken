@@ -3,6 +3,12 @@
 @section('title', 'Pesanan')
 
 @section('content')
+    <style>
+        body {
+            background-color: #EDEDED !important;
+        }
+    </style>
+
     <div class="grid grid-cols-4 gap-5 mb-8">
         @php
             $statItems = [
@@ -13,7 +19,7 @@
             ];
         @endphp
         @foreach($statItems as $stat)
-        <div class="bg-white rounded-3xl px-6 py-5 border-l-[6px]" style="border-color: {{ $stat['border'] }}">
+        <div class="rounded-3xl px-6 py-5 border-l-[6px]" style="background-color: #F5F1EE; border-color: {{ $stat['border'] }}">
             <div class="flex items-center gap-4">
                 <div class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0" style="background-color: {{ $stat['bg'] }}">
                     <i class="{{ isset($stat['is_reg']) ? 'fa-regular' : 'fa-solid' }} {{ $stat['icon'] }} {{ $stat['icon_color'] }} text-xl"></i>
@@ -34,7 +40,7 @@
         </div>
         <div class="flex gap-3">
             <div class="relative inline-block text-left group">
-                <button type="button" class="bg-white px-4 py-2 rounded-lg font-semibold text-sm text-[#374151] flex items-center gap-2 hover:bg-gray-50 border border-transparent focus:border-gray-200">
+                <button type="button" class="px-4 py-2 rounded-lg font-semibold text-sm text-[#374151] flex items-center gap-2 hover:opacity-90 border border-transparent focus:border-gray-200 transition" style="background-color: #F5F1EE;">
                     <i class="fa-solid fa-filter text-xs"></i> 
                     <span id="filterLabel">Semua</span>
                     <i class="fa-solid fa-chevron-down text-[10px] ml-1"></i>
@@ -57,7 +63,7 @@
 
     <div id="orderGrid" class="grid grid-cols-3 gap-5 mb-6">
         @foreach($pesanan as $index => $p)
-            <div class="order-card {{ $index >= 9 ? 'hidden' : '' }} bg-white rounded-2xl overflow-hidden cursor-pointer hover:shadow-md transition group" 
+            <div class="order-card {{ $index >= 9 ? 'hidden' : '' }} rounded-2xl overflow-hidden cursor-pointer hover:shadow-md transition group" style="background-color: #F5F1EE;"
                  data-page="{{ floor($index / 9) + 1 }}"
                  data-kode="{{ $p['kode'] }}"
                  onclick="openModal('{{ $p['kode'] }}', '{{ $p['customer'] }}', '{{ $p['meja'] ?? 'Take Away' }}', '{{ $p['waktu'] }}', '{{ $p['tipe'] }}', {{ json_encode($p['items']) }})">
@@ -140,11 +146,12 @@
     </div>
     @endif
 
-    <div id="detailModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4" onclick="closeModal()">
-        <div class="bg-white rounded-3xl w-full max-w-lg shadow-2xl relative animate-in fade-in zoom-in duration-200" onclick="event.stopPropagation()">
-            <button onclick="closeModal()" class="absolute -top-3 -right-3 w-9 h-9 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 transition shadow-md z-10">
-                <i class="fa-solid fa-xmark text-black text-base"></i>
-            </button>
+<div id="detailModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4" onclick="closeModal()">
+    <div class="bg-white rounded-3xl w-full max-w-lg shadow-2xl relative animate-in fade-in zoom-in duration-200" onclick="event.stopPropagation()">
+        
+        <button onclick="closeModal()" class="absolute -top-4 -right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 transition shadow-xl z-20 border border-gray-100">
+            <i class="fa-solid fa-xmark text-[#332B2B] text-lg font-bold"></i>
+        </button>
 
             <div class="bg-[#332B2B] p-7 rounded-t-3xl">
                 <div class="flex items-start justify-between gap-4">

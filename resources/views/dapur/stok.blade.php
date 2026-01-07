@@ -3,6 +3,12 @@
 @section('title', 'Stok')
 
 @section('content')
+<style>
+    body {
+        background-color: #EDEDED !important;
+    }
+</style>
+
 <div class="grid grid-cols-4 gap-5 mb-8">
     @php
         $statsStok = [
@@ -13,7 +19,7 @@
         ];
     @endphp
     @foreach($statsStok as $stat)
-    <div class="bg-white rounded-3xl px-6 py-5 border-l-[6px] shadow-sm" style="border-color: {{ $stat['border'] }}">
+    <div class="rounded-3xl px-6 py-5 border-l-[6px] shadow-sm" style="background-color: #F5F1EE; border-color: {{ $stat['border'] }}">
         <div class="flex items-center gap-4">
             <div class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0" style="background-color: {{ $stat['iconBg'] }}">
                 <i class="fa-solid {{ $stat['icon'] }} text-white text-xl"></i>
@@ -27,7 +33,7 @@
     @endforeach
 </div>
 
-<div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100">
+<div class="rounded-2xl overflow-hidden shadow-sm border border-gray-100" style="background-color: #F5F1EE;">
     <div class="px-8 py-6 flex justify-between items-center border-b border-gray-100">
         <h2 class="text-base font-bold text-[#374151] uppercase tracking-wide">List Menu dan Stok</h2>
         <div class="flex gap-3">
@@ -54,16 +60,16 @@
     </div>
 
     <div id="tableContainer" class="overflow-x-auto">
-        <table class="w-full table-fixed min-w-[800px]">
+        <table class="w-full table-fixed">
             <thead>
-                <tr class="bg-white border-b border-gray-100 h-16">
-                    <th class="w-[12%] px-6 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Kode</th>
-                    <th class="w-[28%] px-6 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Menu</th>
-                    <th class="w-[12%] px-6 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Kategori</th>
-                    <th class="w-[10%] px-6 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Stok</th>
-                    <th class="w-[12%] px-6 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Antrean</th>
-                    <th class="w-[14%] px-6 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Status</th>
-                    <th class="w-[12%] px-6 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Aksi</th>
+                <tr class="border-b border-gray-100 h-16" style="background-color: #F5F1EE;">
+                    <th class="w-[10%] px-6 py-5 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Kode</th>
+                    <th class="w-[28%] px-6 py-5 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Menu</th>
+                    <th class="w-[12%] px-6 py-5 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Kategori</th>
+                    <th class="w-[8%] px-6 py-5 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Stok</th>
+                    <th class="w-[14%] px-6 py-5 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Antrean</th>
+                    <th class="w-[14%] px-6 py-5 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Status</th>
+                    <th class="w-[14%] px-6 py-5 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Aksi</th>
                 </tr>
             </thead>
             <tbody id="stokBody">
@@ -75,32 +81,25 @@
                     $statusBg = $isRendah ? 'rgba(200, 21, 21, 0.23)' : 'rgba(42, 190, 42, 0.23)';
                     $statusColor = $isRendah ? '#C81515' : '#2ABE2A';
                 @endphp
-                <tr class="stok-row border-b border-gray-50 hover:bg-gray-50 transition cursor-pointer h-[72px]" 
+                <tr class="stok-row border-b border-gray-50 hover:bg-white/50 transition cursor-pointer h-[72px]" 
                     data-kategori="{{ $catFinal }}"
+                    style="background-color: #F5F1EE;"
                     onclick="openDetailModal({{ json_encode($s) }}, '{{ $catFinal }}')">
-                    
-                    <td class="px-6 py-4 text-sm font-bold text-[#374151] truncate uppercase">{{ $s['kode'] }}</td>
-                    
-                    <td class="px-6 py-4 text-sm font-medium text-[#374151] menu-name truncate">{{ $s['menu'] }}</td>
-                    
-                    <td class="px-6 py-4 text-sm text-[#6B7280] font-medium">{{ $catFinal }}</td>
-                    
-                    <td class="px-6 py-4 text-sm font-bold text-[#374151]">{{ $s['jumlah'] }}</td>
-                    
-                    <td class="px-6 py-4 text-sm text-[#374151] font-medium">{{ $s['antrean'] }} Pesanan</td>
-                    
-                    <td class="px-6 py-4">
-                        <span class="px-4 py-2 rounded-full text-[10px] font-bold uppercase inline-block whitespace-nowrap text-center min-w-[85px]" 
+                    <td class="px-6 py-5 text-sm font-bold text-[#374151] truncate">{{ $s['kode'] }}</td>
+                    <td class="px-6 py-5 text-sm font-medium text-[#374151] menu-name truncate">{{ $s['menu'] }}</td>
+                    <td class="px-6 py-5 text-sm text-[#6B7280] truncate">{{ $catFinal }}</td>
+                    <td class="px-6 py-5 text-sm font-semibold text-[#374151]">{{ $s['jumlah'] }}</td>
+                    <td class="px-6 py-5 text-sm text-[#374151]">{{ $s['antrean'] }} Pesanan</td>
+                    <td class="px-6 py-5">
+                        <span class="px-5 py-1.5 rounded-full text-[10px] font-bold uppercase inline-block whitespace-nowrap" 
                               style="background-color: {{ $statusBg }}; color: {{ $statusColor }}">
                             {{ $s['status'] }}
                         </span>
                     </td>
-                    
-                    <td class="px-6 py-4">
-                        <button class="px-3 py-1.5 rounded-lg text-xs font-semibold text-[#374151] flex items-center gap-2 hover:bg-[#EAD9C4]/30 transition border border-[#999999]" 
-                            style="background-color: rgba(234, 217, 196, 0.21);"
+                    <td class="px-6 py-5">
+                        <button class="bg-white px-4 py-2 rounded-lg text-sm font-semibold text-[#374151] flex items-center gap-2 hover:bg-gray-50 transition border border-gray-200" 
                             onclick="event.stopPropagation(); openDetailModal({{ json_encode($s) }}, '{{ $catFinal }}')">
-                            <i class="fa-solid fa-file-lines text-[10px]"></i> <span class="hidden xl:inline">Catatan</span>
+                            <i class="fa-solid fa-file-lines text-xs"></i> <span class="hidden xl:inline">Catatan</span>
                         </button>
                     </td>
                 </tr>
@@ -118,68 +117,61 @@
         <button onclick="goToPage(currentPage - 1)" id="prevBtn" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 bg-white text-[#374151] hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition shadow-sm">
             <i class="fa-solid fa-chevron-left text-xs"></i>
         </button>
+        
         <div id="paginationButtons" class="flex gap-2"></div>
+
         <button onclick="goToPage(currentPage + 1)" id="nextBtn" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 bg-white text-[#374151] hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition shadow-sm">
             <i class="fa-solid fa-chevron-right text-xs"></i>
         </button>
     </div>
 </div>
 
-<div id="detailStokModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4" onclick="closeDetailModal()">
+<div id="detailStokModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50 p-4" onclick="closeDetailModal()">
     <div class="bg-white rounded-3xl w-full max-w-lg shadow-2xl relative" onclick="event.stopPropagation()">
         
-        <button onclick="closeDetailModal()" class="absolute -top-3 -right-3 w-9 h-9 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 transition shadow-lg z-50 border border-gray-100">
-            <i class="fa-solid fa-xmark text-[#332B2B] text-sm font-bold"></i>
+        <button onclick="closeDetailModal()" class="absolute -top-4 -right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 transition shadow-xl z-20 border border-gray-100">
+            <i class="fa-solid fa-xmark text-[#332B2B] text-lg font-bold"></i>
         </button>
 
-        <div class="overflow-hidden rounded-3xl">
-            <div class="bg-[#332B2B] p-6 pb-5">
-                <div class="flex items-start gap-4 mb-5">
-                    <div class="w-14 h-14 bg-[#423D3D] rounded-2xl flex items-center justify-center flex-shrink-0">
-                        <i class="fa-solid fa-utensils text-white text-xl"></i>
-                    </div>
-                    <div class="flex-1">
-                        <h2 id="modalMenuTitle" class="text-xl font-bold text-white mb-2 uppercase leading-tight">MENU NAME</h2>
-                        <div class="flex gap-2 mt-2" id="modalBadges"></div>
-                    </div>
+        <div class="bg-[#332B2B] p-6 pb-5">
+            <div class="flex items-start gap-4 mb-5">
+                <div class="w-14 h-14 bg-[#423D3D] rounded-2xl flex items-center justify-center flex-shrink-0">
+                    <i class="fa-solid fa-utensils text-white text-xl"></i>
                 </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="bg-[#3A3A3A] rounded-2xl p-4 flex items-center gap-3">
-                        <div class="w-14 h-14 bg-[#F08606] rounded-2xl flex items-center justify-center flex-shrink-0">
-                            <i class="fa-solid fa-box text-white text-2xl"></i>
-                        </div>
-                        <div>
-                            <p id="modalStokQty" class="text-3xl font-black text-white leading-none mb-1">0</p>
-                            <p class="text-xs text-white/70 font-medium">Stok Tersedia</p>
-                        </div>
-                    </div>
-                    <div class="bg-[#3A3A3A] rounded-2xl p-4 flex items-center gap-3">
-                        <div class="w-14 h-14 bg-[#518EC8] rounded-2xl flex items-center justify-center flex-shrink-0">
-                            <i class="fa-solid fa-arrow-trend-up text-white text-2xl"></i>
-                        </div>
-                        <div>
-                            <p id="modalAntreanQty" class="text-3xl font-black text-white leading-none mb-1">0</p>
-                            <p class="text-xs text-white/70 font-medium">Dalam Antrean</p>
-                        </div>
-                    </div>
+                <div class="flex-1">
+                    <h2 id="modalMenuTitle" class="text-xl font-bold text-white mb-2 uppercase leading-tight">MENU NAME</h2>
+                    <div class="flex gap-2 mt-2" id="modalBadges"></div>
                 </div>
             </div>
 
-            <div class="px-6 pb-6 pt-5 text-[#374151]">
-                <h4 id="modalAntreanTitle" class="text-xs font-bold text-[#9CA3AF] uppercase tracking-wider mb-4">Pesanan Masuk (0)</h4>
-                <div id="modalOrderList" class="space-y-3 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar"></div>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="bg-[#3A3A3A] rounded-2xl p-4 flex items-center gap-3">
+                    <div class="w-14 h-14 bg-[#F08606] rounded-2xl flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-box text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <p id="modalStokQty" class="text-3xl font-black text-white leading-none mb-1">0</p>
+                        <p class="text-xs text-white/70 font-medium">Stok Tersedia</p>
+                    </div>
+                </div>
+                <div class="bg-[#3A3A3A] rounded-2xl p-4 flex items-center gap-3">
+                    <div class="w-14 h-14 bg-[#518EC8] rounded-2xl flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-arrow-trend-up text-white text-2xl"></i>
+                    </div>
+                    <div>
+                        <p id="modalAntreanQty" class="text-3xl font-black text-white leading-none mb-1">0</p>
+                        <p class="text-xs text-white/70 font-medium">Dalam Antrean</p>
+                    </div>
+                </div>
             </div>
+        </div>
+
+        <div class="px-6 pb-6 pt-5 text-[#374151]">
+            <h4 id="modalAntreanTitle" class="text-xs font-bold text-[#9CA3AF] uppercase tracking-wider mb-4">Pesanan Masuk (0)</h4>
+            <div id="modalOrderList" class="space-y-3 max-h-[350px] overflow-y-auto pr-2"></div>
         </div>
     </div>
 </div>
-
-<style>
-    /* Tambahan agar scrollbar di modal lebih rapi */
-    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
-</style>
 
 <script>
 let currentPage = 1;
@@ -207,32 +199,56 @@ function updateTable() {
     const displayedRows = filteredRows.slice(start, end);
     displayedRows.forEach(row => row.classList.remove('hidden'));
 
+    const tableContainer = document.getElementById('tableContainer');
+    const minHeight = Math.max(displayedRows.length * 72, 72);
+    tableContainer.style.minHeight = minHeight + 'px';
+
     renderPagination(totalPages, totalItems, start, end);
 }
 
 function renderPagination(totalPages, totalItems, start, end) {
     const container = document.getElementById('paginationButtons');
-    const actualEnd = Math.min(end, totalItems);
-    document.getElementById('startRange').innerText = totalItems > 0 ? start + 1 : 0;
-    document.getElementById('endRange').innerText = actualEnd;
-    document.getElementById('totalItems').innerText = totalItems;
+    const startRange = document.getElementById('startRange');
+    const endRange = document.getElementById('endRange');
+    const totalDisplay = document.getElementById('totalItems');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
 
-    document.getElementById('prevBtn').disabled = currentPage <= 1;
-    document.getElementById('nextBtn').disabled = currentPage >= totalPages || totalItems === 0;
+    const actualEnd = Math.min(end, totalItems);
+    startRange.innerText = totalItems > 0 ? start + 1 : 0;
+    endRange.innerText = actualEnd;
+    totalDisplay.innerText = totalItems;
+
+    prevBtn.disabled = currentPage <= 1;
+    nextBtn.disabled = currentPage >= totalPages || totalItems === 0;
 
     let html = '';
     for (let i = 1; i <= totalPages; i++) {
-        const activeClass = i === currentPage 
-            ? 'bg-[#332B2B] text-white' 
-            : 'bg-white text-[#374151] border border-gray-200';
-        html += `<button onclick="goToPage(${i})" class="w-10 h-10 flex items-center justify-center rounded-lg font-bold text-sm transition ${activeClass}">${i}</button>`;
+        const activeStyle = i === currentPage 
+            ? 'background-color: #332B2B; color: white;' 
+            : 'background-color: white; color: #374151; border: 1px solid #E5E7EB;';
+        html += `<button onclick="goToPage(${i})" class="w-10 h-10 flex items-center justify-center rounded-lg font-bold text-sm transition" style="${activeStyle}">${i}</button>`;
     }
     container.innerHTML = html;
 }
 
-function goToPage(page) { currentPage = page; updateTable(); }
-function applyFilter(cat) { currentFilter = cat; document.getElementById('filterLabel').innerText = cat; currentPage = 1; updateTable(); }
-function handleSearch() { searchQuery = document.getElementById('searchInput').value; currentPage = 1; updateTable(); }
+function goToPage(page) {
+    currentPage = page;
+    updateTable();
+}
+
+function applyFilter(cat) {
+    currentFilter = cat;
+    document.getElementById('filterLabel').innerText = cat;
+    currentPage = 1;
+    updateTable();
+}
+
+function handleSearch() {
+    searchQuery = document.getElementById('searchInput').value;
+    currentPage = 1;
+    updateTable();
+}
 
 function openDetailModal(data, category) {
     document.getElementById('modalMenuTitle').innerText = data.menu;

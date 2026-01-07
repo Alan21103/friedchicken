@@ -10,7 +10,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         body { 
             font-family: 'Inter', sans-serif; 
-            background: #F5F5F7;
+            background: #EDEDED;
         }
         .sidebar-transition {
             transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -31,11 +31,11 @@
 <body>
     <div class="flex min-h-screen overflow-hidden">
         
-        <aside id="sidebar" class="sidebar-transition w-64 bg-white flex flex-col border-r border-gray-100 shrink-0">
-            <div class="h-20 flex items-center px-4 overflow-hidden">
-                <div class="flex items-center gap-3 w-full">
-                    <div id="logoIcon" class="w-11 h-11 bg-[#423D3D] rounded-xl flex items-center justify-center shrink-0 transition-all shadow-sm">
-                        <i class="fa-solid fa-drumstick-bite text-white text-lg"></i>
+        <aside id="sidebar" class="sidebar-transition w-64 flex flex-col border-r border-gray-100 shrink-0" style="background-color: #F5F1EE;">
+            <div class="h-24 flex items-center px-4 overflow-hidden">
+                <div id="logoWrapper" class="flex items-center gap-3 w-full transition-all duration-300">
+                    <div id="logoIcon" class="w-16 h-16 flex items-center justify-center shrink-0 transition-all overflow-hidden">
+                        <img src="{{ asset('images/navbar-logo.png') }}" alt="Logo" class="w-full h-full object-contain scale-110">
                     </div>
                     <span class="sidebar-text font-bold text-base text-[#6B7280] whitespace-nowrap">My Fried Chicken</span>
                 </div>
@@ -62,16 +62,16 @@
 
         <main class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
             
-            <header class="h-16 bg-white flex items-center justify-between px-8 shrink-0 border-b border-gray-50">
+            <header class="h-16 flex items-center justify-between px-8 shrink-0 border-b border-gray-100" style="background-color: #F5F1EE;">
                 <div class="flex items-center gap-4">
-                    <button onclick="toggleSidebar()" class="w-10 h-10 flex items-center justify-center rounded-lg text-[#6B7280] hover:bg-gray-100 transition-colors">
+                    <button onclick="toggleSidebar()" class="w-10 h-10 flex items-center justify-center rounded-lg text-[#6B7280] hover:bg-white/50 transition-colors">
                         <i class="fa-solid fa-bars text-lg"></i>
                     </button>
                     <h1 class="text-lg font-semibold text-[#374151]">@yield('title')</h1>
                 </div>
                 
                 <div class="relative inline-block text-left group">
-                    <button type="button" class="flex items-center gap-3 bg-[#F3F4F6] pl-2 pr-4 py-1.5 rounded-full cursor-pointer hover:bg-gray-200 transition-all focus:outline-none">
+                    <button type="button" class="flex items-center gap-3 bg-white pl-2 pr-4 py-1.5 rounded-full cursor-pointer hover:bg-gray-100 transition-all focus:outline-none border border-gray-50">
                         <div class="w-8 h-8 bg-[#332B2B] rounded-full flex items-center justify-center text-white text-[10px]">
                             <i class="fa-solid fa-user"></i>
                         </div>
@@ -98,7 +98,7 @@
                 </div>
             </header>
 
-            <div class="flex-1 px-8 py-6 overflow-auto bg-[#F5F5F7]">
+            <div class="flex-1 px-8 py-6 overflow-auto" style="background-color: #EDEDED;">
                 @yield('content')
             </div>
         </main>
@@ -107,19 +107,25 @@
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
-            const logoIcon = document.getElementById('logoIcon');
+            const logoWrapper = document.getElementById('logoWrapper');
             const isFull = sidebar.classList.contains('w-64');
             
             if (isFull) {
-                // Saat Menutup
+                // Saat Menutup (Collapse)
                 sidebar.classList.replace('w-64', 'w-20');
                 sidebar.classList.add('sidebar-collapsed');
-                logoIcon.classList.add('mx-auto'); 
+                
+                // Membuat logo ke tengah (presisi dengan icon menu)
+                logoWrapper.classList.remove('gap-3');
+                logoWrapper.classList.add('justify-center');
             } else {
-                // Saat Membuka
+                // Saat Membuka (Expand)
                 sidebar.classList.replace('w-20', 'w-64');
                 sidebar.classList.remove('sidebar-collapsed');
-                logoIcon.classList.remove('mx-auto');
+                
+                // Mengembalikan posisi logo ke kiri
+                logoWrapper.classList.add('gap-3');
+                logoWrapper.classList.remove('justify-center');
             }
         }
     </script>
