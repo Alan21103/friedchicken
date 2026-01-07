@@ -69,7 +69,7 @@
                 class="flex-1 py-2 rounded-lg font-bold text-xs transition-all flex items-center justify-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                        d="M19 21V5a2 2 0 00-2 2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
                     </path>
                 </svg>
                 Dine in
@@ -91,29 +91,32 @@
         <template x-for="item in cart" :key="item.id">
             <div class="bg-[#D4D4D4] rounded-[24px] p-4 relative flex gap-4 items-start shadow-sm border border-black/5">
                 <button @click="updateQty(item.id, -item.qty)"
-                    class="absolute top-3 right-3 text-[#1A1A1A] opacity-60 hover:opacity-100">
+                    class="absolute top-3 right-3 text-[#1A1A1A] opacity-60 hover:opacity-100 transition-opacity">
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
-                        </path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                     </svg>
                 </button>
 
                 <div class="w-24 h-16 bg-[#737D8C] rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden">
-                    <svg class="w-8 h-8 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
-                        </path>
-                    </svg>
+                    <img :src="item.image" :alt="item.nama" class="w-full h-full object-cover">
                 </div>
 
                 <div class="flex-1 pt-1">
                     <h5 class="font-bold text-sm text-[#1A1A1A] mb-1" x-text="item.nama"></h5>
                     <div class="flex items-center bg-[#737D8C]/30 rounded-lg w-fit mb-2">
-                        <button @click="updateQty(item.id, -1)" class="px-2 py-0.5 font-bold text-gray-700">-</button>
-                        <span class="text-xs font-bold px-2 border-x border-black/10" x-text="item.qty"></span>
-                        <button @click="updateQty(item.id, 1)" class="px-2 py-0.5 font-bold text-gray-700">+</button>
+                        <button @click="updateQty(item.id, -1)" class="px-2 py-0.5 font-bold text-gray-700 hover:text-black">-</button>
+                        <span class="text-xs font-bold px-2 border-x border-black/10 text-gray-800" x-text="item.qty"></span>
+                        <button @click="updateQty(item.id, 1)" class="px-2 py-0.5 font-bold text-gray-700 hover:text-black">+</button>
                     </div>
                     <p class="text-[#1A1A1A] font-bold text-xs" x-text="formatPrice(item.harga * item.qty)"></p>
+                </div>
+
+                <div class="absolute bottom-4 right-4 bg-[#A6A6A6] px-2 py-1 rounded-full flex items-center gap-1">
+                    <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span class="text-[8px] font-bold" x-text="item.kategori === 'Minuman' || item.kategori === 'Camilan' ? 'Cepat' : 'Butuh Waktu'"></span>
                 </div>
             </div>
         </template>
