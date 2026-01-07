@@ -1,6 +1,54 @@
-<div class="w-[380px] bg-[#E5E5E5] border-l flex flex-col shadow-2xl flex-shrink-0 h-screen">
+<div class="w-[380px] bg-[#E5E5E5] border-l flex flex-col shadow-2xl flex-shrink-0 h-screen"
+    x-data="{ 
+        cart: [], // Data ini biasanya diisi dari pilihan menu
+        taxRate: 0,
+        serviceRate: 0,
+        orderType: 'Dine In',
+        showPayment: false,
+
+        // Inisialisasi: Ambil data dari Owner (LocalStorage)
+        init() {
+            this.taxRate = parseFloat(localStorage.getItem('proto_pajak')) || 0;
+            this.serviceRate = parseFloat(localStorage.getItem('proto_service_fee')) || 0;
+
+            // Listener agar sinkron otomatis jika Owner mengubah data di tab sebelah
+            window.addEventListener('storage', () => {
+                this.taxRate = parseFloat(localStorage.getItem('proto_pajak')) || 0;
+                this.serviceRate = parseFloat(localStorage.getItem('proto_service_fee')) || 0;
+            });
+        },
+
+        // Logika Perhitungan Dinamis
+        get subtotal() {
+            return this.cart.reduce((sum, item) => sum + (item.harga * item.qty), 0);
+        },
+        get taxAmount() {
+            return this.subtotal * (this.taxRate / 100);
+        },
+        get serviceAmount() {
+            return this.subtotal * (this.serviceRate / 100);
+        },
+        get total() {
+            return this.subtotal + this.taxAmount + this.serviceAmount;
+        },
+
+        // Helper Fungsi
+        updateQty(id, change) {
+            const item = this.cart.find(i => i.id === id);
+            if (item) {
+                item.qty += change;
+                if (item.qty <= 0) {
+                    this.cart = this.cart.filter(i => i.id !== id);
+                }
+            }
+        },
+        formatPrice(val) {
+            return 'Rp ' + new Intl.NumberFormat('id-ID').format(Math.round(val));
+        }
+    }">
+
     <div class="p-6 bg-[#F3F3F3]/80 backdrop-blur-md flex-shrink-0">
-        <div class="flex items-center justify-between mb-6 ">
+        <div class="flex items-center justify-between mb-6">
             <div class="flex items-center gap-3">
                 <svg class="w-6 h-6 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -41,8 +89,7 @@
 
     <div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar bg-[#E5E5E5]">
         <template x-for="item in cart" :key="item.id">
-            <div
-                class="bg-[#D4D4D4] rounded-[24px] p-4 relative flex gap-4 items-start shadow-sm border border-black/5">
+            <div class="bg-[#D4D4D4] rounded-[24px] p-4 relative flex gap-4 items-start shadow-sm border border-black/5">
                 <button @click="updateQty(item.id, -item.qty)"
                     class="absolute top-3 right-3 text-[#1A1A1A] opacity-60 hover:opacity-100">
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -51,8 +98,7 @@
                     </svg>
                 </button>
 
-                <div
-                    class="w-24 h-16 bg-[#737D8C] rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden">
+                <div class="w-24 h-16 bg-[#737D8C] rounded-xl flex-shrink-0 flex items-center justify-center overflow-hidden">
                     <svg class="w-8 h-8 text-white/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
@@ -62,22 +108,12 @@
 
                 <div class="flex-1 pt-1">
                     <h5 class="font-bold text-sm text-[#1A1A1A] mb-1" x-text="item.nama"></h5>
-
                     <div class="flex items-center bg-[#737D8C]/30 rounded-lg w-fit mb-2">
                         <button @click="updateQty(item.id, -1)" class="px-2 py-0.5 font-bold text-gray-700">-</button>
                         <span class="text-xs font-bold px-2 border-x border-black/10" x-text="item.qty"></span>
                         <button @click="updateQty(item.id, 1)" class="px-2 py-0.5 font-bold text-gray-700">+</button>
                     </div>
-
                     <p class="text-[#1A1A1A] font-bold text-xs" x-text="formatPrice(item.harga * item.qty)"></p>
-                </div>
-
-                <div class="absolute bottom-4 right-4 bg-[#A6A6A6] px-2 py-1 rounded-full flex items-center gap-1">
-                    <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span class="text-[8px] font-bold">Butuh Waktu</span>
                 </div>
             </div>
         </template>
@@ -99,12 +135,12 @@
             <span x-text="formatPrice(subtotal)"></span>
         </div>
         <div class="flex justify-between text-xs font-bold text-[#4D4D4D]">
-            <span>Pajak (10%)</span>
-            <span x-text="formatPrice(tax)"></span>
+            <span>Pajak (<span x-text="taxRate"></span>%)</span>
+            <span x-text="formatPrice(taxAmount)"></span>
         </div>
         <div class="flex justify-between text-xs font-bold text-[#4D4D4D]">
-            <span>Service fee (5%)</span>
-            <span x-text="formatPrice(serviceFee)"></span>
+            <span>Service fee (<span x-text="serviceRate"></span>%)</span>
+            <span x-text="formatPrice(serviceAmount)"></span>
         </div>
 
         <div class="pt-6 mt-4 border-t border-black/10 pb-10">
@@ -114,7 +150,7 @@
             </div>
 
             <button @click="showPayment = true" :disabled="cart.length === 0"
-                class="w-full bg-[#D4D4D4] text-[#1A1A1A] py-4  rounded-full font-bold text-sm shadow-sm hover:bg-[#C4C4C4] disabled:opacity-50 transition-all active:scale-95">
+                class="w-full bg-[#D4D4D4] text-[#1A1A1A] py-4 rounded-full font-bold text-sm shadow-sm hover:bg-[#C4C4C4] disabled:opacity-50 transition-all active:scale-95">
                 Bayar Sekarang
             </button>
         </div>

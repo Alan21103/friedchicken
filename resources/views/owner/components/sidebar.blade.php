@@ -29,7 +29,6 @@
                 </button>
 
                 <div x-show="subMenuOpen" x-collapse class="mt-1 space-y-0.5 pl-1">
-
                     <a href="{{ route('owner.menu.index') }}"
                         class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[13px] transition duration-200 {{ request()->routeIs('owner.menu.index') ? 'text-gray-800 font-semibold bg-gray-50' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50' }}">
                         <i class="fa-solid fa-burger text-base"></i>
@@ -43,22 +42,20 @@
                     </a>
 
                     <a href="{{ route('owner.predikat.index') }}"
-                        class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[13px] transition duration-200 
-   {{ request()->routeIs('owner.predikat.index') ? 'text-gray-800 font-semibold bg-gray-50' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50' }}">
+                        class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[13px] transition duration-200 {{ request()->routeIs('owner.predikat.index') ? 'text-gray-800 font-semibold bg-gray-50' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50' }}">
                         <i class="fa-solid fa-tag text-base"></i>
                         <span>Kelola Predikat</span>
                     </a>
 
-                    <a href="#"
-                        class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[13px] transition duration-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50">
+                    <a href="{{ route('owner.pajak.pajak') }}"
+                        class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[13px] transition duration-200 {{ request()->routeIs('owner.pajak.pajak') ? 'text-gray-800 font-semibold bg-gray-50' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50' }}">
                         <i class="fa-solid fa-percent text-[9px] border-2 border-current rounded p-[2px]"></i>
                         <span>Kelola Pajak & Service Fee</span>
                     </a>
                 </div>
             </div>
 
-            <a href="#"
-                class="flex items-center gap-3 px-3 py-2.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700 rounded-lg transition duration-200 text-sm">
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700 rounded-lg transition duration-200 text-sm">
                 <i class="fa-solid fa-chart-line ml-0.5"></i>
                 <span>Laporan Penjualan</span>
             </a>

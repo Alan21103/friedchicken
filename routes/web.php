@@ -81,8 +81,8 @@ Route::middleware('auth.custom:owner')->group(function () {
          * 4. KELOLA PAJAK & SERVICE FEE
          */
         Route::get('/pajak', function () { 
-            return view('owner.pajak.index'); 
-        })->name('pajak.index');
+            return view('owner.pajak.pajak'); 
+        })->name('pajak.pajak');
 
         /**
          * 5. LAPORAN PENJUALAN
