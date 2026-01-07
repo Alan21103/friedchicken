@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Fried Chiken - @yield('title')</title>
+    <title>My Fried Chicken - @yield('title')</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -12,44 +12,56 @@
             font-family: 'Inter', sans-serif; 
             background: #F5F5F7;
         }
-        /* Animasi transisi lebar sidebar */
         .sidebar-transition {
             transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        /* Menyembunyikan text saat sidebar kecil agar tidak overflow */
+        /* Menghilangkan teks saat sidebar ditutup */
         .sidebar-collapsed .sidebar-text {
             display: none;
+            opacity: 0;
+            width: 0;
         }
+        .menu-item:hover, .menu-item.active {
+            background-color: rgba(29, 23, 23, 0.85) !important;
+            color: white !important;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 0px; }
     </style>
 </head>
 <body>
     <div class="flex min-h-screen overflow-hidden">
+        
         <aside id="sidebar" class="sidebar-transition w-64 bg-white flex flex-col border-r border-gray-100 shrink-0">
-            <div class="px-6 py-6 flex items-center gap-3 overflow-hidden">
-                <div class="w-10 h-10 bg-[#9CA3AF] rounded-lg flex items-center justify-center shrink-0">
-                    <i class="fa-solid fa-cube text-white text-lg"></i>
+            <div class="h-20 flex items-center px-4 overflow-hidden">
+                <div class="flex items-center gap-3 w-full">
+                    <div id="logoIcon" class="w-11 h-11 bg-[#423D3D] rounded-xl flex items-center justify-center shrink-0 transition-all shadow-sm">
+                        <i class="fa-solid fa-drumstick-bite text-white text-lg"></i>
+                    </div>
+                    <span class="sidebar-text font-bold text-base text-[#6B7280] whitespace-nowrap">My Fried Chicken</span>
                 </div>
-                <span class="sidebar-text font-bold text-base text-[#6B7280] whitespace-nowrap">My Fried Chicken</span>
             </div>
             
-            <nav class="flex-1 px-4 pt-2 overflow-y-auto overflow-x-hidden">
-                <p class="sidebar-text text-[10px] font-semibold text-[#9CA3AF] uppercase tracking-wider mb-3 px-3 whitespace-nowrap">Main Menu</p>
-                
-                <div class="flex flex-col gap-1">
-                    <a href="{{ url('/dapur') }}" class="flex items-center gap-3 px-3 py-3 rounded-xl transition-all {{ Request::is('dapur') ? 'bg-[#E5E7EB] text-[#374151]' : 'text-[#9CA3AF] hover:bg-gray-50' }}">
-                        <i class="fa-solid fa-file-lines text-lg shrink-0 w-6 text-center"></i>
-                        <span class="sidebar-text font-medium text-sm whitespace-nowrap">Pesanan</span>
+            <nav class="flex-1 px-3 pt-2 overflow-y-auto custom-scrollbar">
+                <p class="sidebar-text text-[10px] font-semibold text-[#9CA3AF] uppercase tracking-wider mb-4 px-4 whitespace-nowrap">Main Menu</p>
+                <div class="flex flex-col gap-2">
+                    <a href="{{ url('/dapur') }}" class="menu-item flex items-center px-4 py-3 rounded-xl transition-all {{ Request::is('dapur') ? 'active' : 'text-[#9CA3AF]' }}">
+                        <div class="w-6 flex justify-center shrink-0">
+                            <i class="fa-solid fa-file-lines text-lg"></i>
+                        </div>
+                        <span class="sidebar-text font-medium text-sm ml-3 whitespace-nowrap">Pesanan</span>
                     </a>
-                    
-                    <a href="{{ url('/dapur/stok') }}" class="flex items-center gap-3 px-3 py-3 rounded-xl transition-all {{ Request::is('dapur/stok') ? 'bg-[#E5E7EB] text-[#374151]' : 'text-[#9CA3AF] hover:bg-gray-50' }}">
-                        <i class="fa-solid fa-box-open text-lg shrink-0 w-6 text-center"></i>
-                        <span class="sidebar-text font-medium text-sm whitespace-nowrap">Stok</span>
+                    <a href="{{ url('/dapur/stok') }}" class="menu-item flex items-center px-4 py-3 rounded-xl transition-all {{ Request::is('dapur/stok') ? 'active' : 'text-[#9CA3AF]' }}">
+                        <div class="w-6 flex justify-center shrink-0">
+                            <i class="fa-solid fa-box-open text-lg"></i>
+                        </div>
+                        <span class="sidebar-text font-medium text-sm ml-3 whitespace-nowrap">Stok</span>
                     </a>
                 </div>
             </nav>
         </aside>
 
         <main class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+            
             <header class="h-16 bg-white flex items-center justify-between px-8 shrink-0 border-b border-gray-50">
                 <div class="flex items-center gap-4">
                     <button onclick="toggleSidebar()" class="w-10 h-10 flex items-center justify-center rounded-lg text-[#6B7280] hover:bg-gray-100 transition-colors">
@@ -58,16 +70,35 @@
                     <h1 class="text-lg font-semibold text-[#374151]">@yield('title')</h1>
                 </div>
                 
-                <div class="flex items-center gap-3 bg-[#F3F4F6] pl-2 pr-4 py-1.5 rounded-full cursor-pointer hover:bg-gray-200 transition-all">
-                    <div class="w-8 h-8 bg-[#9CA3AF] rounded-full flex items-center justify-center text-white">
-                        <i class="fa-solid fa-image text-xs"></i>
+                <div class="relative inline-block text-left group">
+                    <button type="button" class="flex items-center gap-3 bg-[#F3F4F6] pl-2 pr-4 py-1.5 rounded-full cursor-pointer hover:bg-gray-200 transition-all focus:outline-none">
+                        <div class="w-8 h-8 bg-[#332B2B] rounded-full flex items-center justify-center text-white text-[10px]">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <span class="font-semibold text-sm text-[#374151]">Dapur</span>
+                        <i class="fa-solid fa-chevron-down text-[10px] text-[#9CA3AF]"></i>
+                    </button>
+
+                    <div class="hidden group-hover:block absolute right-0 w-52 z-50 pt-2 transition-all">
+                        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+                            <div class="px-5 py-4 border-b border-gray-50 bg-gray-50/50">
+                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">Akses Sistem</p>
+                                <p class="text-sm font-extrabold text-[#332B2B]">Dapur</p>
+                            </div>
+                            
+                            <form method="POST" action="{{ route('logout') }}">
+                                @csrf
+                                <button type="submit" class="w-full text-left px-5 py-4 text-sm text-red-600 font-bold hover:bg-red-50 flex items-center gap-3 transition-colors">
+                                    <i class="fa-solid fa-right-from-bracket text-xs"></i>
+                                    Keluar Sistem
+                                </button>
+                            </form>
+                        </div>
                     </div>
-                    <span class="font-semibold text-sm text-[#374151]">Dapur</span>
-                    <i class="fa-solid fa-chevron-down text-[10px] text-[#9CA3AF]"></i>
                 </div>
             </header>
 
-            <div class="flex-1 px-8 py-6 overflow-auto">
+            <div class="flex-1 px-8 py-6 overflow-auto bg-[#F5F5F7]">
                 @yield('content')
             </div>
         </main>
@@ -76,14 +107,19 @@
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
-            const isCollapsed = sidebar.classList.contains('w-64');
+            const logoIcon = document.getElementById('logoIcon');
+            const isFull = sidebar.classList.contains('w-64');
             
-            if (isCollapsed) {
-                sidebar.classList.remove('w-64');
-                sidebar.classList.add('w-20', 'sidebar-collapsed');
+            if (isFull) {
+                // Saat Menutup
+                sidebar.classList.replace('w-64', 'w-20');
+                sidebar.classList.add('sidebar-collapsed');
+                logoIcon.classList.add('mx-auto'); 
             } else {
-                sidebar.classList.remove('w-20', 'sidebar-collapsed');
-                sidebar.classList.add('w-64');
+                // Saat Membuka
+                sidebar.classList.replace('w-20', 'w-64');
+                sidebar.classList.remove('sidebar-collapsed');
+                logoIcon.classList.remove('mx-auto');
             }
         }
     </script>

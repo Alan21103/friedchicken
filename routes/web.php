@@ -3,7 +3,9 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DapurController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 /*
 |--------------------------------------------------------------------------
 | Web Routes

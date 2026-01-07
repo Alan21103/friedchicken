@@ -6,17 +6,17 @@
     <div class="grid grid-cols-4 gap-5 mb-8">
         @php
             $statItems = [
-                ['label' => 'Total Pesanan', 'val' => '29', 'icon' => 'fa-box'],
-                ['label' => 'Menunggu', 'val' => '6', 'icon' => 'fa-clock', 'is_reg' => true],
-                ['label' => 'Dimasak', 'val' => '10', 'icon' => 'fa-utensils'],
-                ['label' => 'Selesai', 'val' => '18', 'icon' => 'fa-circle-check', 'is_reg' => true],
+                ['label' => 'Total Pesanan', 'val' => '29', 'icon' => 'fa-box', 'bg' => '#423D3D', 'border' => '#332B2B', 'icon_color' => 'text-white'],
+                ['label' => 'Menunggu', 'val' => '6', 'icon' => 'fa-clock', 'is_reg' => true, 'bg' => '#D3B105', 'border' => '#332B2B', 'icon_color' => 'text-black'],
+                ['label' => 'Dimasak', 'val' => '10', 'icon' => 'fa-utensils', 'bg' => '#2ABE2A', 'border' => '#332B2B', 'icon_color' => 'text-white'],
+                ['label' => 'Selesai', 'val' => '18', 'icon' => 'fa-circle-check', 'is_reg' => true, 'bg' => '#55A2EB', 'border' => '#332B2B', 'icon_color' => 'text-white'],
             ];
         @endphp
         @foreach($statItems as $stat)
-        <div class="bg-white rounded-3xl px-6 py-5 border-l-[6px] border-black">
+        <div class="bg-white rounded-3xl px-6 py-5 border-l-[6px]" style="border-color: {{ $stat['border'] }}">
             <div class="flex items-center gap-4">
-                <div class="w-14 h-14 bg-black rounded-2xl flex items-center justify-center flex-shrink-0">
-                    <i class="{{ isset($stat['is_reg']) ? 'fa-regular' : 'fa-solid' }} {{ $stat['icon'] }} text-white text-xl"></i>
+                <div class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0" style="background-color: {{ $stat['bg'] }}">
+                    <i class="{{ isset($stat['is_reg']) ? 'fa-regular' : 'fa-solid' }} {{ $stat['icon'] }} {{ $stat['icon_color'] }} text-xl"></i>
                 </div>
                 <div>
                     <p class="text-3xl font-bold text-[#374151] leading-none mb-1">{{ $stat['val'] }}</p>
@@ -57,52 +57,56 @@
 
     <div id="orderGrid" class="grid grid-cols-3 gap-5 mb-6">
         @foreach($pesanan as $index => $p)
-            <div class="order-card {{ $index >= 9 ? 'hidden' : '' }} bg-white rounded-2xl p-5 cursor-pointer hover:shadow-md transition group" 
+            <div class="order-card {{ $index >= 9 ? 'hidden' : '' }} bg-white rounded-2xl overflow-hidden cursor-pointer hover:shadow-md transition group" 
                  data-page="{{ floor($index / 9) + 1 }}"
                  data-kode="{{ $p['kode'] }}"
                  onclick="openModal('{{ $p['kode'] }}', '{{ $p['customer'] }}', '{{ $p['meja'] ?? 'Take Away' }}', '{{ $p['waktu'] }}', '{{ $p['tipe'] }}', {{ json_encode($p['items']) }})">
                 
-                <div class="flex justify-between items-start mb-5">
-                    <div class="flex items-center gap-3">
-                        <div class="w-11 h-11 bg-black rounded-xl flex items-center justify-center">
-                            <i class="fa-solid {{ $p['tipe'] == 'Dine In' ? 'fa-chair' : 'fa-bag-shopping' }} text-white text-base"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-sm text-[#374151] leading-none mb-1">{{ $p['kode'] }}</h4>
-                            <p class="text-[10px] text-[#9CA3AF] font-medium flex items-center gap-1">
-                                <i class="fa-solid fa-user" style="font-size: 8px;"></i> {{ $p['customer'] }}
-                            </p>
-                        </div>
-                    </div>
-                    
-                    <span id="card-status-{{ $p['kode'] }}"
-                        class="px-2.5 py-1 rounded-full text-[9px] font-bold uppercase flex items-center gap-1 transition-all
-                        {{ $p['status'] == 'Selesai' ? 'bg-white text-black border-2 border-black' : 'bg-black text-white' }}">
-                        <i class="status-icon fa-solid {{ $p['status'] == 'Dimasak' ? 'fa-utensils' : ($p['status'] == 'Menunggu' ? 'fa-clock' : 'fa-circle-check') }}" style="font-size: 8px;"></i>
-                        <span class="status-text">{{ $p['status'] }}</span>
-                    </span>
-                </div>
-
-                <div class="space-y-2.5 mb-5">
+                <div class="bg-[#332B2B] p-4 pb-3.5">
                     <div class="flex justify-between items-center">
-                        <span class="text-[#374151] font-medium text-xs flex items-center gap-2">
-                            <i class="fa-solid fa-location-dot text-[10px] text-[#9CA3AF]"></i> {{ $p['meja'] ?? 'Take Away' }}
-                        </span>
-                        <span class="bg-[#E5E7EB] px-2.5 py-0.5 rounded-full text-[9px] font-bold text-[#374151] uppercase">
-                            {{ $p['tipe'] }}
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 bg-[#423D3D] rounded-xl flex items-center justify-center">
+                                <i class="fa-solid {{ $p['tipe'] == 'Dine In' ? 'fa-chair' : 'fa-bag-shopping' }} text-white text-base"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-base text-white leading-none mb-1.5">{{ $p['kode'] }}</h4>
+                                <p class="text-[11px] text-white/80 font-medium flex items-center gap-1.5">
+                                    <i class="fa-solid fa-user" style="font-size: 9px;"></i> {{ $p['customer'] }}
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <span id="card-status-{{ $p['kode'] }}"
+                            class="px-2.5 py-1 rounded-full text-[9px] font-bold uppercase flex items-center gap-1 transition-all
+                            {{ $p['status'] == 'Selesai' ? 'bg-[#55A2EB] text-white' : ($p['status'] == 'Dimasak' ? 'bg-[#2ABE2A] text-white' : 'bg-[#D3B105] text-black') }}">
+                            <i class="status-icon fa-solid {{ $p['status'] == 'Dimasak' ? 'fa-utensils' : ($p['status'] == 'Menunggu' ? 'fa-clock' : 'fa-circle-check') }}" style="font-size: 8px;"></i>
+                            <span class="status-text">{{ $p['status'] }}</span>
                         </span>
                     </div>
-                    <p class="text-xs text-[#374151] font-medium flex items-center gap-2">
-                        <i class="fa-regular fa-clock text-[10px] text-[#9CA3AF]"></i> Order {{ $p['waktu'] }}
-                    </p>
-                    <p class="text-xs text-[#374151] font-medium flex items-center gap-2">
-                        <i class="fa-solid fa-box text-[10px] text-[#9CA3AF]"></i> {{ count($p['items']) }} Item
-                    </p>
                 </div>
 
-                <button class="w-full py-2.5 bg-[#E5E7EB] rounded-xl font-bold text-xs text-[#374151] flex items-center justify-center gap-2 group-hover:bg-[#D1D5DB] transition">
-                    <i class="fa-regular fa-eye text-sm"></i> Detail
-                </button>
+                <div class="p-5 pt-4">
+                    <div class="space-y-2.5 mb-5">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[#374151] font-medium text-xs flex items-center gap-2">
+                                <i class="fa-solid fa-location-dot text-[10px] text-[#9CA3AF]"></i> {{ $p['meja'] ?? 'Take Away' }}
+                            </span>
+                            <span class="px-3 py-1 rounded-full text-[10px] font-bold text-white uppercase" style="background-color: {{ $p['tipe'] == 'Dine In' ? '#7D829B' : '#000000' }}">
+                                {{ $p['tipe'] }}
+                            </span>
+                        </div>
+                        <p class="text-xs text-[#374151] font-medium flex items-center gap-2">
+                            <i class="fa-regular fa-clock text-[10px] text-[#9CA3AF]"></i> Order {{ $p['waktu'] }}
+                        </p>
+                        <p class="text-xs text-[#374151] font-medium flex items-center gap-2">
+                            <i class="fa-solid fa-box text-[10px] text-[#9CA3AF]"></i> {{ count($p['items']) }} Item
+                        </p>
+                    </div>
+
+                    <button class="w-full py-2.5 rounded-xl font-bold text-xs text-[#374151] flex items-center justify-center gap-2 group-hover:opacity-80 transition" style="background-color: rgba(234, 217, 196, 0.21); border: 1px solid rgba(153, 153, 153, 0.5);">
+                        <i class="fa-regular fa-eye text-sm"></i> Detail
+                    </button>
+                </div>
             </div>
         @endforeach
     </div>
@@ -122,7 +126,7 @@
             <div id="pageNumbers" class="flex gap-1.5">
                 @for($i = 1; $i <= ceil(count($pesanan) / 9); $i++)
                     <button onclick="changePage({{ $i }})" 
-                        class="page-btn w-8 h-8 rounded-lg font-bold text-xs transition-all {{ $i == 1 ? 'bg-black text-white shadow-sm' : 'bg-white text-[#374151] border border-gray-100 hover:bg-gray-50' }}">
+                        class="page-btn w-8 h-8 rounded-lg font-bold text-xs transition-all" style="{{ $i == 1 ? 'background-color: #332B2B; color: white;' : 'background-color: white; color: #374151; border: 1px solid #E5E7EB;' }}">
                         {{ $i }}
                     </button>
                 @endfor
@@ -137,61 +141,65 @@
     @endif
 
     <div id="detailModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50 p-4" onclick="closeModal()">
-        <div class="bg-white rounded-3xl w-full max-w-xl shadow-2xl relative animate-in fade-in zoom-in duration-200" onclick="event.stopPropagation()">
-            <button onclick="closeModal()" class="absolute -top-3 -right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 transition shadow-md z-10">
-                <i class="fa-solid fa-xmark text-black text-sm"></i>
+        <div class="bg-white rounded-3xl w-full max-w-lg shadow-2xl relative animate-in fade-in zoom-in duration-200" onclick="event.stopPropagation()">
+            <button onclick="closeModal()" class="absolute -top-3 -right-3 w-9 h-9 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 transition shadow-md z-10">
+                <i class="fa-solid fa-xmark text-black text-base"></i>
             </button>
 
-            <div class="bg-[#F5F5F7] p-6 pb-5 rounded-t-3xl border-b border-gray-100">
-                <div class="flex items-start gap-4 mb-5">
-                    <div id="modalIconBox" class="w-14 h-14 bg-black rounded-2xl flex items-center justify-center flex-shrink-0">
-                        <i id="modalIcon" class="fa-solid fa-utensils text-white text-xl"></i>
+            <div class="bg-[#332B2B] p-7 rounded-t-3xl">
+                <div class="flex items-start justify-between gap-4">
+                    <div class="flex items-start gap-4">
+                        <div id="modalIconBox" class="w-16 h-16 bg-[#423D3D] rounded-2xl flex items-center justify-center flex-shrink-0">
+                            <i id="modalIcon" class="fa-solid fa-utensils text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <h2 id="modalTipe" class="text-xs font-semibold text-white/70 mb-1.5 uppercase tracking-wider">DINE IN</h2>
+                            <h3 id="modalKode" class="text-2xl font-bold text-white mb-2 leading-none">PSN-000</h3>
+                            <p id="modalMeja" class="text-sm text-white/90 font-medium flex items-center gap-2">
+                                <i class="fa-solid fa-location-dot text-xs"></i> <span>Meja 0</span>
+                            </p>
+                        </div>
                     </div>
-                    <div class="flex-1">
-                        <h2 id="modalTipe" class="text-xs font-normal text-[#374151] mb-1 uppercase tracking-wider">DINE IN</h2>
-                        <h3 id="modalKode" class="text-xl font-bold text-[#374151] mb-1 leading-none">PSN-000</h3>
-                        <p id="modalMeja" class="text-xs text-[#6B7280] font-medium flex items-center gap-1.5 mt-1">
-                            <i class="fa-solid fa-location-dot text-[10px]"></i> <span>Meja 0</span>
-                        </p>
-                    </div>
-                    <div class="flex flex-col gap-2 items-end">
-                        <div class="bg-black text-white px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase flex items-center gap-2">
+                    <div class="flex flex-col gap-2.5 items-end">
+                        <div class="bg-[#423D3D] text-white px-4 py-2 rounded-xl text-xs font-bold uppercase flex items-center gap-2">
                             <i class="fa-regular fa-clock"></i> Order <span id="modalWaktu">00:00</span>
                         </div>
-                        <div class="bg-black text-white px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase flex items-center gap-2">
+                        <div class="bg-[#423D3D] text-white px-4 py-2 rounded-xl text-xs font-bold uppercase flex items-center gap-2">
                             <i class="fa-solid fa-user"></i> <span id="modalCustomer">User</span>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="grid grid-cols-3 gap-3">
-                    <div id="tab-menunggu" class="bg-[#9DA3AE] rounded-2xl p-4 flex flex-col items-center justify-center gap-1 transition-all">
-                        <i class="fa-regular fa-clock text-2xl text-white mb-1"></i>
-                        <span class="count text-xl font-black text-white leading-none">0</span>
-                        <span class="text-[10px] font-bold text-white uppercase tracking-tighter">Menunggu</span>
+            <div class="bg-white px-7 py-6">
+                <div class="grid grid-cols-3 gap-4">
+                    <div id="tab-menunggu" class="bg-[#D3B105] rounded-2xl p-5 flex flex-col items-center justify-center gap-1.5 transition-all">
+                        <i class="fa-regular fa-clock text-3xl text-black mb-1"></i>
+                        <span class="count text-2xl font-black text-black leading-none">0</span>
+                        <span class="text-xs font-bold text-black uppercase tracking-tight">Menunggu</span>
                     </div>
-                    <div id="tab-dimasak" class="bg-[#9DA3AE] rounded-2xl p-4 flex flex-col items-center justify-center gap-1 transition-all">
-                        <i class="fa-solid fa-utensils text-2xl text-white mb-1"></i>
-                        <span class="count text-xl font-black text-white leading-none">0</span>
-                        <span class="text-[10px] font-bold text-white uppercase tracking-tighter">Dimasak</span>
+                    <div id="tab-dimasak" class="bg-[#2ABE2A] rounded-2xl p-5 flex flex-col items-center justify-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-utensils text-3xl text-white mb-1"></i>
+                        <span class="count text-2xl font-black text-white leading-none">0</span>
+                        <span class="text-xs font-bold text-white uppercase tracking-tight">Dimasak</span>
                     </div>
-                    <div id="tab-selesai" class="bg-[#9DA3AE] rounded-2xl p-4 flex flex-col items-center justify-center gap-1 transition-all">
-                        <i class="fa-solid fa-circle-check text-2xl text-white mb-1"></i>
-                        <span class="count text-xl font-black text-white leading-none">0</span>
-                        <span class="text-[10px] font-bold text-white uppercase tracking-tighter">Selesai</span>
+                    <div id="tab-selesai" class="bg-[#55A2EB] rounded-2xl p-5 flex flex-col items-center justify-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-circle-check text-3xl text-white mb-1"></i>
+                        <span class="count text-2xl font-black text-white leading-none">0</span>
+                        <span class="text-xs font-bold text-white uppercase tracking-tight">Selesai</span>
                     </div>
                 </div>
             </div>
 
-            <div class="px-6 py-6 bg-white rounded-b-3xl">
-                <h4 class="text-[10px] font-bold text-[#9CA3AF] uppercase tracking-widest mb-4">Daftar Menu</h4>
-                <div id="menuItemsContainer" class="space-y-4 max-h-[280px] overflow-y-auto pr-1">
+            <div class="px-7 pb-7 bg-white rounded-b-3xl">
+                <h4 class="text-xs font-bold text-[#9CA3AF] uppercase tracking-widest mb-5">Daftar Menu (<span id="totalItems">0</span> Item)</h4>
+                <div id="menuItemsContainer" class="space-y-4 max-h-[320px] overflow-y-auto pr-2">
                 </div>
 
                 <div id="finishOrderContainer" class="mt-8 hidden animate-in slide-in-from-bottom-2">
                     <div class="flex justify-center w-full">
-                        <button onclick="confirmFinishOrder()" class="w-full py-2.5 bg-black text-white rounded-xl flex items-center justify-center gap-3 font-bold text-xs shadow-sm cursor-pointer border-none outline-none">
-                            <i class="fa-solid fa-circle-check text-base"></i>
+                        <button onclick="confirmFinishOrder()" class="w-full py-3 rounded-xl flex items-center justify-center gap-3 font-bold text-sm shadow-sm cursor-pointer border-none outline-none text-white" style="background-color: #332B2B">
+                            <i class="fa-solid fa-circle-check text-lg"></i>
                             Selesaikan Pesanan
                         </button>
                     </div>
@@ -248,9 +256,13 @@
 
             document.querySelectorAll('.page-btn').forEach((btn) => {
                 if (parseInt(btn.innerText) === currentPage) {
-                    btn.className = "page-btn w-8 h-8 rounded-lg font-bold text-xs bg-black text-white shadow-sm transition-all";
+                    btn.style.backgroundColor = '#332B2B';
+                    btn.style.color = 'white';
+                    btn.style.border = 'none';
                 } else {
-                    btn.className = "page-btn w-8 h-8 rounded-lg font-bold text-xs bg-white text-[#374151] border border-gray-100 hover:bg-gray-50 transition-all";
+                    btn.style.backgroundColor = 'white';
+                    btn.style.color = '#374151';
+                    btn.style.border = '1px solid #E5E7EB';
                 }
             });
 
@@ -281,26 +293,27 @@
 
         function renderMenuItems(items) {
             const container = document.getElementById('menuItemsContainer');
+            document.getElementById('totalItems').innerText = items.length;
             container.innerHTML = items.map((item, index) => `
-                <div class="bg-gray-50 rounded-2xl p-4 border border-gray-100 flex justify-between items-center">
+                <div class="bg-[#332B2B] rounded-2xl p-5 flex justify-between items-center">
                     <div class="flex-1">
-                        <h5 class="text-sm font-bold text-[#374151]">${item.name}</h5>
-                        <p class="text-xs text-[#6B7280] font-medium">X ${item.qty}</p>
-                        ${item.note ? `<p class="text-[10px] text-[#9CA3AF] italic mt-0.5">${item.note}</p>` : ''}
+                        <h5 class="text-base font-bold text-white mb-1">${item.name}</h5>
+                        <p class="text-sm text-white/70 font-medium">X ${item.qty}</p>
+                        ${item.note ? `<p class="text-xs text-white/50 italic mt-1">${item.note}</p>` : ''}
                     </div>
-                    <div class="flex flex-col items-end gap-2">
-                        <div id="badge-item-${index}" class="px-3 py-1 rounded-full flex items-center gap-1.5 transition-all">
-                            <i class="fa-solid text-[9px]"></i>
-                            <span class="text-[9px] font-bold uppercase"></span>
+                    <div class="flex flex-col items-end gap-2.5">
+                        <div id="badge-item-${index}" class="px-3.5 py-1.5 rounded-full flex items-center gap-2 transition-all">
+                            <i class="fa-solid text-xs"></i>
+                            <span class="text-xs font-bold uppercase"></span>
                         </div>
                         <div class="relative">
                             <select onchange="updateItemStatus(${index}, this.value)" 
-                                class="bg-[#E5E7EB] border-0 rounded-lg pl-3 pr-8 py-2 text-[10px] font-extrabold text-[#374151] appearance-none focus:outline-none cursor-pointer uppercase min-w-[110px]">
+                                class="bg-[#423D3D] border-0 rounded-xl pl-4 pr-10 py-2.5 text-xs font-extrabold text-white appearance-none focus:outline-none cursor-pointer uppercase min-w-[120px]">
                                 <option value="Menunggu" ${item.status === 'Menunggu' ? 'selected' : ''}>Menunggu</option>
                                 <option value="Dimasak" ${item.status === 'Dimasak' ? 'selected' : ''}>Dimasak</option>
                                 <option value="Selesai" ${item.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
                             </select>
-                            <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-[9px] text-[#6B7280] pointer-events-none"></i>
+                            <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-xs text-white/70 pointer-events-none"></i>
                         </div>
                     </div>
                 </div>
@@ -324,13 +337,13 @@
             text.innerText = status;
 
             if (status === 'Selesai') {
-                badge.className = "px-3 py-1 rounded-full flex items-center gap-1.5 bg-white border-2 border-black text-black";
+                badge.className = "px-3.5 py-1.5 rounded-full flex items-center gap-2 bg-[#55A2EB] text-white";
                 icon.className = "fa-solid fa-circle-check";
             } else if (status === 'Dimasak') {
-                badge.className = "px-3 py-1 rounded-full flex items-center gap-1.5 bg-black text-white";
+                badge.className = "px-3.5 py-1.5 rounded-full flex items-center gap-2 bg-[#2ABE2A] text-white";
                 icon.className = "fa-solid fa-utensils";
             } else {
-                badge.className = "px-3 py-1 rounded-full flex items-center gap-1.5 bg-gray-100 text-gray-500 border border-gray-200";
+                badge.className = "px-3.5 py-1.5 rounded-full flex items-center gap-2 bg-[#D3B105] text-black";
                 icon.className = "fa-regular fa-clock";
             }
         }
@@ -355,18 +368,19 @@
             const text = cardStatus.querySelector('.status-text');
 
             if (statuses.every(s => s === 'Selesai')) {
-                cardStatus.className = "px-2.5 py-1 rounded-full text-[9px] font-bold uppercase flex items-center gap-1 bg-white text-black border-2 border-black transition-all";
+                cardStatus.className = "px-2.5 py-1 rounded-full text-[9px] font-bold uppercase flex items-center gap-1 bg-[#55A2EB] text-white transition-all";
                 icon.className = "status-icon fa-solid fa-circle-check";
                 text.innerText = "Selesai";
                 document.getElementById('finishOrderContainer').classList.remove('hidden');
             } else {
-                cardStatus.className = "px-2.5 py-1 rounded-full text-[9px] font-bold uppercase flex items-center gap-1 bg-black text-white transition-all";
                 document.getElementById('finishOrderContainer').classList.add('hidden');
                 
                 if (statuses.some(s => s === 'Dimasak' || s === 'Selesai')) {
+                    cardStatus.className = "px-2.5 py-1 rounded-full text-[9px] font-bold uppercase flex items-center gap-1 bg-[#2ABE2A] text-white transition-all";
                     icon.className = "status-icon fa-solid fa-utensils";
                     text.innerText = "Dimasak";
                 } else {
+                    cardStatus.className = "px-2.5 py-1 rounded-full text-[9px] font-bold uppercase flex items-center gap-1 bg-[#D3B105] text-black transition-all";
                     icon.className = "status-icon fa-solid fa-clock";
                     text.innerText = "Menunggu";
                 }

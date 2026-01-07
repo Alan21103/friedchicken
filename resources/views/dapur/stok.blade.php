@@ -4,10 +4,18 @@
 
 @section('content')
 <div class="grid grid-cols-4 gap-5 mb-8">
+    @php
+        $statsStok = [
+            ['label' => 'Total Menu', 'val' => '29', 'icon' => 'fa-box', 'iconBg' => '#F08606', 'border' => '#332B2B'],
+            ['label' => 'Total Antrean', 'val' => '6', 'icon' => 'fa-arrow-trend-up', 'iconBg' => '#518EC8', 'border' => '#332B2B'],
+            ['label' => 'Stok Rendah', 'val' => '10', 'icon' => 'fa-triangle-exclamation', 'iconBg' => '#C81515', 'border' => '#332B2B'],
+            ['label' => 'Stok Aman', 'val' => '18', 'icon' => 'fa-circle-check', 'iconBg' => '#2ABE2A', 'border' => '#332B2B'],
+        ];
+    @endphp
     @foreach($statsStok as $stat)
-    <div class="bg-white rounded-3xl px-6 py-5 border-l-[6px] border-black shadow-sm">
+    <div class="bg-white rounded-3xl px-6 py-5 border-l-[6px] shadow-sm" style="border-color: {{ $stat['border'] }}">
         <div class="flex items-center gap-4">
-            <div class="w-14 h-14 bg-black rounded-2xl flex items-center justify-center flex-shrink-0">
+            <div class="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0" style="background-color: {{ $stat['iconBg'] }}">
                 <i class="fa-solid {{ $stat['icon'] }} text-white text-xl"></i>
             </div>
             <div>
@@ -46,16 +54,16 @@
     </div>
 
     <div id="tableContainer" class="overflow-x-auto">
-        <table class="w-full table-fixed">
+        <table class="w-full table-fixed min-w-[800px]">
             <thead>
                 <tr class="bg-white border-b border-gray-100 h-16">
-                    <th class="w-[10%] px-6 py-5 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Kode</th>
-                    <th class="w-[27%] px-6 py-5 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Menu</th>
-                    <th class="w-[13%] px-6 py-5 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Kategori</th>
-                    <th class="w-[10%] px-6 py-5 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Stok</th>
-                    <th class="w-[15%] px-6 py-5 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Antrean</th>
-                    <th class="w-[12%] px-6 py-5 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Status</th>
-                    <th class="w-[13%] px-6 py-5 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Aksi</th>
+                    <th class="w-[12%] px-6 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Kode</th>
+                    <th class="w-[28%] px-6 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Menu</th>
+                    <th class="w-[12%] px-6 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Kategori</th>
+                    <th class="w-[10%] px-6 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Stok</th>
+                    <th class="w-[12%] px-6 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Antrean</th>
+                    <th class="w-[14%] px-6 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Status</th>
+                    <th class="w-[12%] px-6 text-left text-[10px] font-bold text-[#9CA3AF] uppercase tracking-wider">Aksi</th>
                 </tr>
             </thead>
             <tbody id="stokBody">
@@ -63,22 +71,34 @@
                 @php
                     $isPaket = str_contains(strtolower($s['menu']), 'panas') || str_contains(strtolower($s['menu']), 'pamer');
                     $catFinal = $isPaket ? 'Paket' : $s['kategori'];
+                    $isRendah = strtolower($s['status']) === 'rendah';
+                    $statusBg = $isRendah ? 'rgba(200, 21, 21, 0.23)' : 'rgba(42, 190, 42, 0.23)';
+                    $statusColor = $isRendah ? '#C81515' : '#2ABE2A';
                 @endphp
                 <tr class="stok-row border-b border-gray-50 hover:bg-gray-50 transition cursor-pointer h-[72px]" 
                     data-kategori="{{ $catFinal }}"
                     onclick="openDetailModal({{ json_encode($s) }}, '{{ $catFinal }}')">
-                    <td class="px-6 py-5 text-sm font-bold text-[#374151] truncate">{{ $s['kode'] }}</td>
-                    <td class="px-6 py-5 text-sm font-medium text-[#374151] menu-name truncate">{{ $s['menu'] }}</td>
-                    <td class="px-6 py-5 text-sm text-[#6B7280]">{{ $catFinal }}</td>
-                    <td class="px-6 py-5 text-sm font-semibold text-[#374151]">{{ $s['jumlah'] }}</td>
-                    <td class="px-6 py-5 text-sm text-[#374151]">{{ $s['antrean'] }} Pesanan</td>
-                    <td class="px-6 py-5">
-                        <span class="px-4 py-1.5 rounded-full text-[10px] font-bold uppercase inline-block bg-[#E5E7EB] text-[#374151] whitespace-nowrap">
+                    
+                    <td class="px-6 py-4 text-sm font-bold text-[#374151] truncate uppercase">{{ $s['kode'] }}</td>
+                    
+                    <td class="px-6 py-4 text-sm font-medium text-[#374151] menu-name truncate">{{ $s['menu'] }}</td>
+                    
+                    <td class="px-6 py-4 text-sm text-[#6B7280] font-medium">{{ $catFinal }}</td>
+                    
+                    <td class="px-6 py-4 text-sm font-bold text-[#374151]">{{ $s['jumlah'] }}</td>
+                    
+                    <td class="px-6 py-4 text-sm text-[#374151] font-medium">{{ $s['antrean'] }} Pesanan</td>
+                    
+                    <td class="px-6 py-4">
+                        <span class="px-4 py-2 rounded-full text-[10px] font-bold uppercase inline-block whitespace-nowrap text-center min-w-[85px]" 
+                              style="background-color: {{ $statusBg }}; color: {{ $statusColor }}">
                             {{ $s['status'] }}
                         </span>
                     </td>
-                    <td class="px-6 py-5">
-                        <button class="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-[#374151] flex items-center gap-2 hover:bg-black hover:text-white transition" 
+                    
+                    <td class="px-6 py-4">
+                        <button class="px-3 py-1.5 rounded-lg text-xs font-semibold text-[#374151] flex items-center gap-2 hover:bg-[#EAD9C4]/30 transition border border-[#999999]" 
+                            style="background-color: rgba(234, 217, 196, 0.21);"
                             onclick="event.stopPropagation(); openDetailModal({{ json_encode($s) }}, '{{ $catFinal }}')">
                             <i class="fa-solid fa-file-lines text-[10px]"></i> <span class="hidden xl:inline">Catatan</span>
                         </button>
@@ -98,64 +118,72 @@
         <button onclick="goToPage(currentPage - 1)" id="prevBtn" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 bg-white text-[#374151] hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition shadow-sm">
             <i class="fa-solid fa-chevron-left text-xs"></i>
         </button>
-        
         <div id="paginationButtons" class="flex gap-2"></div>
-
         <button onclick="goToPage(currentPage + 1)" id="nextBtn" class="w-10 h-10 flex items-center justify-center rounded-lg border border-gray-200 bg-white text-[#374151] hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed transition shadow-sm">
             <i class="fa-solid fa-chevron-right text-xs"></i>
         </button>
     </div>
 </div>
 
-<div id="detailStokModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50 p-4" onclick="closeDetailModal()">
-    <div class="bg-white rounded-3xl w-full max-w-xl shadow-2xl relative overflow-hidden" onclick="event.stopPropagation()">
-        <button onclick="closeDetailModal()" class="absolute top-4 right-4 w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 transition z-10">
-            <i class="fa-solid fa-xmark text-gray-700 text-base font-bold"></i>
+<div id="detailStokModal" class="fixed inset-0 bg-black/60 hidden items-center justify-center z-50 p-4" onclick="closeDetailModal()">
+    <div class="bg-white rounded-3xl w-full max-w-lg shadow-2xl relative" onclick="event.stopPropagation()">
+        
+        <button onclick="closeDetailModal()" class="absolute -top-3 -right-3 w-9 h-9 bg-white rounded-full flex items-center justify-center hover:bg-gray-100 transition shadow-lg z-50 border border-gray-100">
+            <i class="fa-solid fa-xmark text-[#332B2B] text-sm font-bold"></i>
         </button>
 
-        <div class="bg-gray-100 p-6 pb-5">
-            <div class="flex items-start gap-4 mb-5">
-                <div class="w-14 h-14 bg-black rounded-2xl flex items-center justify-center flex-shrink-0">
-                    <i class="fa-solid fa-utensils text-white text-xl"></i>
+        <div class="overflow-hidden rounded-3xl">
+            <div class="bg-[#332B2B] p-6 pb-5">
+                <div class="flex items-start gap-4 mb-5">
+                    <div class="w-14 h-14 bg-[#423D3D] rounded-2xl flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid fa-utensils text-white text-xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <h2 id="modalMenuTitle" class="text-xl font-bold text-white mb-2 uppercase leading-tight">MENU NAME</h2>
+                        <div class="flex gap-2 mt-2" id="modalBadges"></div>
+                    </div>
                 </div>
-                <div class="flex-1">
-                    <h2 id="modalMenuTitle" class="text-xl font-bold text-[#374151] mb-1 uppercase">MENU NAME</h2>
-                    <div class="flex gap-2 mt-2" id="modalBadges"></div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="bg-[#3A3A3A] rounded-2xl p-4 flex items-center gap-3">
+                        <div class="w-14 h-14 bg-[#F08606] rounded-2xl flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-box text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <p id="modalStokQty" class="text-3xl font-black text-white leading-none mb-1">0</p>
+                            <p class="text-xs text-white/70 font-medium">Stok Tersedia</p>
+                        </div>
+                    </div>
+                    <div class="bg-[#3A3A3A] rounded-2xl p-4 flex items-center gap-3">
+                        <div class="w-14 h-14 bg-[#518EC8] rounded-2xl flex items-center justify-center flex-shrink-0">
+                            <i class="fa-solid fa-arrow-trend-up text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <p id="modalAntreanQty" class="text-3xl font-black text-white leading-none mb-1">0</p>
+                            <p class="text-xs text-white/70 font-medium">Dalam Antrean</p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-3">
-                <div class="bg-[#BCC1CA] rounded-2xl p-4 flex items-center gap-3">
-                    <div class="w-11 h-11 bg-black rounded-xl flex items-center justify-center flex-shrink-0">
-                        <i class="fa-solid fa-box text-white text-lg"></i>
-                    </div>
-                    <div>
-                        <p id="modalStokQty" class="text-2xl font-bold text-[#374151] leading-none mb-0.5">0</p>
-                        <p class="text-[10px] text-[#374151] font-semibold">Stok Tersedia</p>
-                    </div>
-                </div>
-                <div class="bg-[#BCC1CA] rounded-2xl p-4 flex items-center gap-3">
-                    <div class="w-11 h-11 bg-black rounded-xl flex items-center justify-center flex-shrink-0">
-                        <i class="fa-solid fa-arrow-trend-up text-white text-lg"></i>
-                    </div>
-                    <div>
-                        <p id="modalAntreanQty" class="text-2xl font-bold text-[#374151] leading-none mb-0.5">0</p>
-                        <p class="text-[10px] text-[#374151] font-semibold">Dalam Antrean</p>
-                    </div>
-                </div>
+            <div class="px-6 pb-6 pt-5 text-[#374151]">
+                <h4 id="modalAntreanTitle" class="text-xs font-bold text-[#9CA3AF] uppercase tracking-wider mb-4">Pesanan Masuk (0)</h4>
+                <div id="modalOrderList" class="space-y-3 max-h-[350px] overflow-y-auto pr-2 custom-scrollbar"></div>
             </div>
-        </div>
-
-        <div class="px-6 pb-6 pt-5 text-[#374151]">
-            <h4 id="modalAntreanTitle" class="text-xs font-bold text-[#9CA3AF] uppercase tracking-wider mb-4">Pesanan Masuk (0)</h4>
-            <div id="modalOrderList" class="space-y-3 max-h-[450px] overflow-y-auto pr-2"></div>
         </div>
     </div>
 </div>
 
+<style>
+    /* Tambahan agar scrollbar di modal lebih rapi */
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 10px; }
+</style>
+
 <script>
 let currentPage = 1;
-const itemsPerPage = 12; // Menampilkan 12 data per halaman
+const itemsPerPage = 12;
 let currentFilter = 'Semua';
 let searchQuery = '';
 
@@ -179,57 +207,32 @@ function updateTable() {
     const displayedRows = filteredRows.slice(start, end);
     displayedRows.forEach(row => row.classList.remove('hidden'));
 
-    // Update min-height tabel berdasarkan jumlah data yang ditampilkan
-    const tableContainer = document.getElementById('tableContainer');
-    const minHeight = Math.max(displayedRows.length * 72, 72); // Minimal 1 row
-    tableContainer.style.minHeight = minHeight + 'px';
-
     renderPagination(totalPages, totalItems, start, end);
 }
 
 function renderPagination(totalPages, totalItems, start, end) {
     const container = document.getElementById('paginationButtons');
-    const startRange = document.getElementById('startRange');
-    const endRange = document.getElementById('endRange');
-    const totalDisplay = document.getElementById('totalItems');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-
     const actualEnd = Math.min(end, totalItems);
-    startRange.innerText = totalItems > 0 ? start + 1 : 0;
-    endRange.innerText = actualEnd;
-    totalDisplay.innerText = totalItems;
+    document.getElementById('startRange').innerText = totalItems > 0 ? start + 1 : 0;
+    document.getElementById('endRange').innerText = actualEnd;
+    document.getElementById('totalItems').innerText = totalItems;
 
-    prevBtn.disabled = currentPage <= 1;
-    nextBtn.disabled = currentPage >= totalPages || totalItems === 0;
+    document.getElementById('prevBtn').disabled = currentPage <= 1;
+    document.getElementById('nextBtn').disabled = currentPage >= totalPages || totalItems === 0;
 
     let html = '';
     for (let i = 1; i <= totalPages; i++) {
         const activeClass = i === currentPage 
-            ? 'bg-black text-white' 
-            : 'bg-white text-[#374151] border border-gray-200 hover:bg-gray-50';
+            ? 'bg-[#332B2B] text-white' 
+            : 'bg-white text-[#374151] border border-gray-200';
         html += `<button onclick="goToPage(${i})" class="w-10 h-10 flex items-center justify-center rounded-lg font-bold text-sm transition ${activeClass}">${i}</button>`;
     }
     container.innerHTML = html;
 }
 
-function goToPage(page) {
-    currentPage = page;
-    updateTable();
-}
-
-function applyFilter(cat) {
-    currentFilter = cat;
-    document.getElementById('filterLabel').innerText = cat;
-    currentPage = 1;
-    updateTable();
-}
-
-function handleSearch() {
-    searchQuery = document.getElementById('searchInput').value;
-    currentPage = 1;
-    updateTable();
-}
+function goToPage(page) { currentPage = page; updateTable(); }
+function applyFilter(cat) { currentFilter = cat; document.getElementById('filterLabel').innerText = cat; currentPage = 1; updateTable(); }
+function handleSearch() { searchQuery = document.getElementById('searchInput').value; currentPage = 1; updateTable(); }
 
 function openDetailModal(data, category) {
     document.getElementById('modalMenuTitle').innerText = data.menu;
@@ -237,9 +240,13 @@ function openDetailModal(data, category) {
     document.getElementById('modalAntreanQty').innerText = data.antrean;
     document.getElementById('modalAntreanTitle').innerText = `Pesanan Masuk (${data.antrean})`;
 
+    const isRendah = data.status.toLowerCase() === 'rendah';
+    const statusBg = isRendah ? 'rgba(200, 21, 21, 0.23)' : 'rgba(42, 190, 42, 0.23)';
+    const statusColor = isRendah ? '#C81515' : '#2ABE2A';
+
     document.getElementById('modalBadges').innerHTML = `
-        <div class="bg-black text-white px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-tighter">${category}</div>
-        <div class="bg-black text-white px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-tighter">${data.status}</div>
+        <div class="bg-[#423D3D] text-white px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-tighter">${category}</div>
+        <div class="px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-tighter" style="background-color: ${statusBg}; color: ${statusColor}">${data.status}</div>
     `;
 
     const list = document.getElementById('modalOrderList');
@@ -248,19 +255,19 @@ function openDetailModal(data, category) {
     if (data.antrean > 0) {
         for (let i = 1; i <= data.antrean; i++) {
             list.innerHTML += `
-                <div class="bg-gray-100 rounded-2xl p-4 flex items-center justify-between">
+                <div class="bg-[#332B2B] rounded-2xl p-4 flex items-center justify-between">
                     <div class="flex items-center gap-3">
-                        <div class="w-11 h-11 bg-black rounded-xl flex items-center justify-center flex-shrink-0">
+                        <div class="w-11 h-11 bg-[#423D3D] rounded-xl flex items-center justify-center flex-shrink-0">
                             <i class="fa-solid fa-bag-shopping text-white text-base"></i>
                         </div>
                         <div>
-                            <h5 class="text-sm font-bold text-[#374151] mb-0.5 uppercase">ORD-0${i}</h5>
-                            <p class="text-[10px] text-[#9CA3AF] flex items-center gap-1.5 font-medium">
+                            <h5 class="text-sm font-bold text-white mb-0.5 uppercase">PSN-00${i}</h5>
+                            <p class="text-[10px] text-white/70 flex items-center gap-1.5 font-medium">
                                 <i class="fa-regular fa-clock"></i> Order 15:${10+i}
                             </p>
                         </div>
                     </div>
-                    <div class="bg-black text-white px-4 py-2 rounded-xl">
+                    <div class="bg-[#423D3D] text-white px-4 py-2 rounded-xl">
                         <span class="text-sm font-bold uppercase">X 1</span>
                     </div>
                 </div>`;
