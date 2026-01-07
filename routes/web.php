@@ -25,10 +25,7 @@ Route::middleware('auth.custom:kasir')->group(function () {
 });
 
 // DAPUR //
-
-// Grouping Route Dapur (Gunakan Controller agar data dummy muncul)
 Route::middleware('auth.custom:dapur')->group(function () {
-    // Arahkan ke Controller, bukan ke view langsung
     Route::get('/dapur', [DapurController::class, 'index'])->name('dapur.index');
     Route::get('/dapur/stok', [DapurController::class, 'stok'])->name('dapur.stok');
 });
@@ -38,7 +35,6 @@ Route::middleware('auth.custom:dapur')->group(function () {
  */
 Route::middleware('auth.custom:owner')->group(function () {
     
-    // Redirect /owner langsung ke Kelola Menu
     Route::get('/owner', function () {
         return redirect()->route('owner.menu.index');
     })->name('owner.index');
@@ -62,17 +58,14 @@ Route::middleware('auth.custom:owner')->group(function () {
         /**
          * 3. KELOLA PREDIKAT
          */
-        // List Predikat
         Route::get('/predikat', function () { 
             return view('owner.predikat.predikat'); 
         })->name('predikat.index');
 
-        // Tambah Predikat
         Route::get('/predikat/tambah', function () { 
             return view('owner.predikat.create-predikat'); 
         })->name('predikat.create');
 
-        // Edit Predikat (Menerima parameter ID) - ROUTE BARU
         Route::get('/predikat/{id}/edit', function ($id) {
             return view('owner.predikat.edit-predikat', ['id' => $id]);
         })->name('predikat.edit');
@@ -85,11 +78,18 @@ Route::middleware('auth.custom:owner')->group(function () {
         })->name('pajak.pajak');
 
         /**
-         * 5. LAPORAN PENJUALAN
+         * 5. PROGRESS KEUNTUNGAN
          */
-        Route::get('/laporan', function () { 
-            return "Halaman Laporan Penjualan sedang dalam pengembangan"; 
-        })->name('laporan.index');
+        Route::get('/progress-keuntungan', function () { 
+            return view('owner.keuntungan.progress'); 
+        })->name('keuntungan.index');
+
+        /**
+         * 6. TREN MENU (ROUTE BARU)
+         */
+        Route::get('/tren-menu', function () {
+            return view('owner.tren.tren'); // Memanggil file tren.blade.php di folder owner/tren
+        })->name('tren.index');
 
     });
 });

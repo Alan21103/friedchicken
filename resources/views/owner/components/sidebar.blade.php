@@ -7,12 +7,16 @@
     x-transition:leave-start="translate-x-0"
     x-transition:leave-end="-translate-x-full"
     class="w-64 bg-white h-screen border-r border-gray-200 fixed left-0 top-0 overflow-y-auto z-20"
-    x-data="{ subMenuOpen: true }">
+    {{-- LOGIKA BARU: subMenuOpen akan true HANYA jika route saat ini adalah bagian dari sub-menu tersebut --}}
+    x-data="{ 
+        subMenuOpen: {{ request()->routeIs('owner.menu.*', 'owner.kategori.*', 'owner.predikat.*', 'owner.pajak.*') ? 'true' : 'false' }} 
+    }">
+    
     <div class="p-6 flex items-center gap-2.5 border-b border-gray-100">
         <div class="w-9 h-9 bg-slate-400 rounded-lg flex items-center justify-center text-white">
             <i class="fa-solid fa-drumstick-bite text-lg"></i>
         </div>
-        <span class="font-semibold text-gray-600 text-base">My Fried Chiken</span>
+        <span class="font-semibold text-gray-600 text-base">My Fried Chicken</span>
     </div>
 
     <nav class="mt-4 px-4">
@@ -55,9 +59,20 @@
                 </div>
             </div>
 
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 text-gray-500 hover:bg-gray-50 hover:text-gray-700 rounded-lg transition duration-200 text-sm">
+            <a href="{{ route('owner.keuntungan.index') }}"
+                @click="subMenuOpen = false"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition duration-200 text-sm 
+                {{ request()->routeIs('owner.keuntungan.index') ? 'bg-[#DEE2E6] text-gray-800 font-semibold' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700' }}">
                 <i class="fa-solid fa-chart-line ml-0.5"></i>
-                <span>Laporan Penjualan</span>
+                <span>Progress Keuntungan</span>
+            </a>
+
+            <a href="{{ route('owner.tren.index') }}"
+                @click="subMenuOpen = false"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-lg transition duration-200 text-sm 
+                {{ request()->routeIs('owner.tren.index') ? 'bg-[#DEE2E6] text-gray-800 font-semibold' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700' }}">
+                <i class="fa-solid fa-arrow-trend-up ml-0.5"></i>
+                <span>Tren Menu</span>
             </a>
         </div>
     </nav>
