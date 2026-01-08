@@ -133,8 +133,7 @@
             <i class="fa-solid fa-xmark text-[#332B2B] text-lg font-bold"></i>
         </button>
 
-        <div class="bg-[#332B2B] p-6 pb-5">
-            <div class="flex items-start gap-4 mb-5">
+        <div class="bg-[#332B2B] p-6 pb-5 rounded-t-3xl">            <div class="flex items-start gap-4 mb-5">
                 <div class="w-14 h-14 bg-[#423D3D] rounded-2xl flex items-center justify-center flex-shrink-0">
                     <i class="fa-solid fa-utensils text-white text-xl"></i>
                 </div>
@@ -166,7 +165,7 @@
             </div>
         </div>
 
-        <div class="px-6 pb-6 pt-5 text-[#374151]">
+        <div class="px-6 pb-6 pt-5 text-[#374151] rounded-b-3xl">
             <h4 id="modalAntreanTitle" class="text-xs font-bold text-[#9CA3AF] uppercase tracking-wider mb-4">Pesanan Masuk (0)</h4>
             <div id="modalOrderList" class="space-y-3 max-h-[350px] overflow-y-auto pr-2"></div>
         </div>
