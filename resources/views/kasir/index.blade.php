@@ -7,6 +7,8 @@
     <title>Kasir - My Fried Chicken</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         [x-cloak] {
             display: none !important;
@@ -128,13 +130,13 @@
                     const isFast = p.kategori === 'Minuman' || p.kategori === 'Camilan';
 
                     const badgeTime = isFast
-                        ? `<div class="flex items-center gap-1">
+                        ? `<div class="flex items-center gap-1 text-emerald-500 font-bold">
                                 <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"/>
                                 </svg>
                                 <span>Cepat</span>
                         </div>`
-                        : `<div class="flex items-center gap-1">
+                        : `<div class="flex items-center gap-1 text-amber-500 font-bold">
                                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -156,7 +158,7 @@
                         : '';
 
                     return `
-                    <div class="bg-white rounded-[32px] overflow-hidden shadow-sm border border-transparent hover:border-slate-300 transition-all flex flex-col group h-full relative">
+                    <div class="bg-[#F5F1EE] rounded-[32px] overflow-hidden shadow-sm border border-transparent hover:border-slate-300 transition-all flex flex-col group h-full relative">
                         
                         <!-- IMAGE AREA (DESIGN TETAP) -->
                        <div class="relative h-44 overflow-hidden bg-gray-100 cursor-pointer" 
@@ -180,7 +182,7 @@
                             <!-- ADD BUTTON -->
                             <button 
                                 onclick="event.stopPropagation(); window.dispatchEvent(new CustomEvent('add-to-cart', {detail: ${p.id}}))"
-                                class="absolute bottom-3 right-3 w-10 h-10 bg-[#4F5B69] text-white rounded-full flex items-center justify-center hover:scale-110 transition-transform shadow-lg z-20">
+                                class="absolute bottom-3 right-3 w-10 h-10 bg-[#332B2B] text-[#E6D5B8] rounded-full flex items-center justify-center hover:scale-110 hover:bg-[#433939] transition-all shadow-lg z-20 border border-white/10">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                 </svg>
@@ -215,8 +217,17 @@
 
                 // Fungsi konfirmasi tambah ke keranjang dari detail
                 addToCartFromDetail() {
-                    for (let i = 0; i < this.detailQty; i++) {
-                        this.addToCartById(this.selectedProduct.id);
+                    const id = this.selectedProduct.id;
+                    const product = this.menus.find(m => m.id === id);
+                    if (!product) return;
+
+                    let found = this.cart.find(i => i.id === id);
+                    if (found) {
+                        // Langsung tambah sesuai qty yang dipilih di detail
+                        found.qty += this.detailQty;
+                    } else {
+                        // Tambah item baru dengan qty dari detail
+                        this.cart.push({ ...product, qty: this.detailQty });
                     }
                     this.showDetail = false;
                 },
@@ -243,9 +254,21 @@
 
                 // --- Getters (Computed Properties) ---
                 get subtotal() { return this.cart.reduce((s, i) => s + (i.harga * i.qty), 0); },
-                get tax() { return this.subtotal * 0.1; },
-                get serviceFee() { return this.subtotal * 0.05; },
-                get total() { return this.subtotal + this.tax + this.serviceFee; },
+
+                get taxAmount() {
+                    // Menggunakan taxRate dari localStorage (dinamis)
+                    return this.subtotal * (this.taxRate / 100);
+                },
+
+                get serviceAmount() {
+                    // Menggunakan serviceRate dari localStorage (dinamis)
+                    return this.subtotal * (this.serviceRate / 100);
+                },
+
+                get total() {
+                    return this.subtotal + this.taxAmount + this.serviceAmount;
+                },
+
                 get change() { return Math.max(0, this.cashReceived - this.total); },
 
                 get filteredMenus() {
@@ -338,7 +361,41 @@
                 },
 
                 printReceipt() {
-                    alert('Mencetak Struk...');
+                    const element = document.getElementById('receipt-content');
+
+                    if (!element) {
+                        console.error("Elemen receipt-content tidak ditemukan!");
+                        return;
+                    }
+
+                    // Pastikan html2canvas tersedia di browser
+                    if (typeof html2canvas === 'undefined') {
+                        alert("Library html2canvas belum dimuat. Periksa koneksi internet atau tag script Anda.");
+                        return;
+                    }
+
+                    html2canvas(element, {
+                        backgroundColor: "#ffffff",
+                        scale: 2,
+                        useCORS: true, // Tambahkan ini jika ada gambar dari URL luar
+                        allowTaint: true,
+                        logging: true, // Aktifkan untuk melihat error di Inspect Element -> Console
+                        ignoreElements: (node) => {
+                            return node.classList.contains('ignore-download');
+                        }
+                    }).then(canvas => {
+                        try {
+                            const imageData = canvas.toDataURL("image/png");
+                            const link = document.createElement('a');
+                            link.download = `Struk-${this.orderCode || 'Pesanan'}.png`;
+                            link.href = imageData;
+                            document.body.appendChild(link); // Tambahkan ke body sebentar (penting untuk beberapa browser)
+                            link.click();
+                            document.body.removeChild(link);
+                        } catch (e) {
+                            console.error("Gagal mendownload struk:", e);
+                        }
+                    });
                 },
 
                 completeTransaction() {
@@ -357,7 +414,23 @@
                     }).format(v);
                 },
 
+                refreshSettings() {
+                    // Ambil dari LocalStorage (Data dari Owner)
+                    this.taxRate = parseFloat(localStorage.getItem('proto_pajak')) || 0;
+                    this.serviceRate = parseFloat(localStorage.getItem('proto_service_fee')) || 0;
+                },
+
                 init() {
+
+                    this.refreshSettings();
+
+                    // 2. Listener agar sinkron otomatis jika Owner mengubah data di tab sebelah
+                    window.addEventListener('storage', (e) => {
+                        if (e.key === 'proto_pajak' || e.key === 'proto_service_fee') {
+                            this.refreshSettings();
+                        }
+                    });
+
                     window.addEventListener('add-to-cart', (e) => this.addToCartById(e.detail));
                     window.addEventListener('open-product-detail', (e) => {
                         this.selectedProduct = e.detail; // Mengisi data produk yang diklik
