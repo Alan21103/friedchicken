@@ -1,6 +1,30 @@
 @extends('owner.layouts.layouts')
 
+@section('title', content: 'Edit Predikat')
+
 @section('content')
+{{-- SEMUA CUSTOM CSS DISATUKAN DI SINI --}}
+<style>
+    /* 1. Menghilangkan spinner bawaan browser pada input number */
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+        -webkit-appearance: none; 
+        margin: 0; 
+    }
+
+    /* 2. Styling scrollbar agar minimalis & kalem */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 5px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background-color: #E6D5B8;
+        border-radius: 10px;
+    }
+</style>
+
 <div class="max-w-7xl mx-auto" 
      x-data="{ 
         idPredikat: '{{ $id }}',
@@ -12,15 +36,17 @@
             kategori: '',
         },
 
+        // State Dropdown
+        catOpen: false,
+        menuOpen: false,
+
         init() {
-            // 1. Load data pendukung
             const savedCats = localStorage.getItem('my_categories');
             this.categories = savedCats ? JSON.parse(savedCats) : [];
 
             const savedMenus = localStorage.getItem('my_menus');
             this.allMenus = savedMenus ? JSON.parse(savedMenus) : [];
 
-            // 2. Load data predikat yang akan diedit
             const savedPreds = localStorage.getItem('my_predicates');
             if (savedPreds) {
                 const predicates = JSON.parse(savedPreds);
@@ -35,15 +61,24 @@
 
         get filteredMenus() {
             if (!this.editPredicate.kategori) return [];
-            return this.allMenus.filter(menu => menu.kategori === this.editPredicate.kategori);
+            const selectedCat = this.editPredicate.kategori.toLowerCase().trim();
+            return this.allMenus.filter(menu => {
+                const menuCat = (menu.kategori || '').toLowerCase().trim();
+                return menuCat === selectedCat;
+            });
         },
 
-        addMenu(event) {
-            const menuName = event.target.value;
+        selectCategory(catName) {
+            this.editPredicate.kategori = catName;
+            this.selectedMenus = [];
+            this.catOpen = false;
+        },
+
+        addMenu(menuName) {
             if (menuName && !this.selectedMenus.includes(menuName)) {
                 this.selectedMenus.push(menuName);
             }
-            event.target.value = '';
+            this.menuOpen = false;
         },
 
         removeMenu(index) {
@@ -53,6 +88,9 @@
         update() {
             if(!this.editPredicate.nama || !this.editPredicate.kategori) {
                 return alert('Nama Predikat dan Kategori wajib diisi!');
+            }
+            if(this.selectedMenus.length === 0) {
+                return alert('Pilih minimal satu menu!');
             }
 
             const savedPredicates = localStorage.getItem('my_predicates');
@@ -72,71 +110,105 @@
                 window.location.href = '{{ route('owner.predikat.index') }}';
             }
         }
-     }">
+     }" x-init="init()" x-cloak>
     
-    <nav class="flex text-[11px] text-gray-400 mb-2 gap-2 items-center px-1">
-        <a href="{{ route('owner.predikat.index') }}" class="hover:text-gray-600 transition">Kelola Predikat</a>
-        <span class="text-gray-300">/</span>
-        <span class="text-gray-500 font-medium">Edit Predikat</span>
+    {{-- Breadcrumb --}}
+    <nav class="flex text-[10px] text-[#4A3F3F]/40 mb-3 gap-2 items-center px-1 uppercase tracking-widest font-bold">
+        <a href="{{ route('owner.predikat.index') }}" class="hover:text-[#332B2B] transition">Kelola Predikat</a>
+        <span class="opacity-30">/</span>
+        <span class="text-[#332B2B]">Edit Predikat</span>
     </nav>
 
-    <div class="flex justify-between items-start mb-8 px-1">
-        <div>
-            <h1 class="text-2xl font-bold text-gray-800">Edit Predikat</h1>
-            <p class="text-sm text-gray-500 mt-1">Ubah informasi predikat <span class="font-bold" x-text="'PR' + idPredikat"></span></p>
+    {{-- Header --}}
+    <div class="flex justify-between items-end mb-10 px-1">
+        <div class="text-left">
+            <h1 class="text-3xl font-black text-[#332B2B] tracking-tight">Edit Predikat</h1>
+            <p class="text-sm text-[#4A3F3F]/60 mt-1 font-medium">Ubah informasi label untuk predikat <span class="font-bold text-[#332B2B]" x-text="'PR' + idPredikat"></span></p>
         </div>
-        <button @click="update()" class="flex items-center gap-2 bg-[#8B95A1] text-white px-7 py-2.5 rounded-lg font-bold hover:bg-slate-500 transition shadow-sm active:scale-95 border-none">
-            <i class="fa-regular fa-floppy-disk text-lg"></i>
+        <button @click="update()" 
+            class="flex items-center gap-3 bg-[#332B2B] text-[#E6D5B8] px-8 py-3.5 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-[#4A3F3F] transition shadow-lg shadow-[#332B2B]/20 active:scale-95 border-none cursor-pointer">
+            <i class="fa-regular fa-floppy-disk text-sm"></i>
             <span>Simpan Perubahan</span>
         </button>
     </div>
 
-    <div class="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 p-12">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-14 gap-y-10">
+    {{-- Form Card --}}
+    <div class="bg-white rounded-[3rem] shadow-sm border border-[#E6D5B8]/30 p-14 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-[#E6D5B8]/10 rounded-full -mr-16 -mt-16"></div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-12 text-left relative z-10">
             
+            {{-- Input Nama --}}
             <div class="flex flex-col gap-3">
-                <label class="font-bold text-gray-700 text-[14px] ml-1">Nama Predikat</label>
+                <label class="text-[10px] font-black text-[#332B2B] uppercase tracking-[0.2em] ml-1">Nama Predikat</label>
                 <input type="text" x-model="editPredicate.nama"
-                    class="w-full px-5 py-3.5 rounded-xl border border-gray-200 focus:ring-2 focus:ring-slate-100 focus:border-slate-400 outline-none transition text-gray-600 shadow-sm text-sm">
+                    class="w-full px-6 py-4 rounded-2xl border border-[#E6D5B8] focus:ring-4 focus:ring-[#332B2B]/5 focus:border-[#332B2B] outline-none transition text-[#332B2B] font-bold text-sm shadow-sm">
             </div>
 
-            <div class="flex flex-col gap-3">
-                <label class="font-bold text-gray-700 text-[14px] ml-1">Kategori</label>
-                <div class="relative">
-                    <select x-model="editPredicate.kategori" @change="selectedMenus = []"
-                            class="w-full px-5 py-3.5 rounded-xl border border-gray-200 appearance-none focus:ring-2 focus:ring-slate-100 focus:border-slate-400 outline-none transition text-gray-600 bg-white shadow-sm cursor-pointer text-sm">
-                        <template x-for="cat in categories" :key="cat.id">
-                            <option :value="cat.nama" x-text="cat.nama" :selected="cat.nama === editPredicate.kategori"></option>
-                        </template>
-                    </select>
-                    <i class="fa-solid fa-chevron-down absolute right-5 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 pointer-events-none"></i>
+            {{-- Dropdown Kategori Dasar --}}
+            <div class="flex flex-col gap-3 relative">
+                <label class="text-[10px] font-black text-[#332B2B] uppercase tracking-[0.2em] ml-1">Kategori Dasar</label>
+                <button @click="catOpen = !catOpen" @click.away="catOpen = false"
+                    class="w-full px-6 py-4 rounded-2xl border border-[#E6D5B8] bg-white flex justify-between items-center text-[#332B2B] font-bold text-sm">
+                    <span x-text="editPredicate.kategori || 'Pilih Kategori'"></span>
+                    <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300" :class="catOpen ? 'rotate-180' : ''"></i>
+                </button>
+                
+                <div x-show="catOpen" x-transition 
+                    class="absolute z-50 w-full mt-[85px] bg-white border border-[#E6D5B8] rounded-2xl shadow-xl overflow-hidden py-2 max-h-48 overflow-y-auto custom-scrollbar">
+                    <template x-for="cat in categories" :key="cat.id">
+                        <button @click="selectCategory(cat.nama)" 
+                            class="w-full text-left px-6 py-3 text-sm font-bold text-[#332B2B] hover:bg-[#332B2B] hover:text-[#E6D5B8] transition">
+                            <span x-text="cat.nama"></span>
+                        </button>
+                    </template>
                 </div>
             </div>
 
-            <div class="flex flex-col gap-3 md:col-span-2">
-                <label class="font-bold text-gray-700 text-[14px] ml-1">Pilih Menu</label>
-                <div class="relative">
-                    <select @change="addMenu($event)" 
-                            class="w-full px-5 py-3.5 rounded-xl border border-gray-200 appearance-none focus:ring-2 focus:ring-slate-100 focus:border-slate-400 outline-none transition text-gray-600 bg-white shadow-sm cursor-pointer text-sm">
-                        <option value="" selected>Tambah Menu Lainnya...</option>
-                        <template x-for="menu in filteredMenus" :key="menu.id">
-                            <option :value="menu.nama" x-text="menu.nama"></option>
-                        </template>
-                    </select>
-                    <i class="fa-solid fa-chevron-down absolute right-5 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 pointer-events-none"></i>
+            {{-- Dropdown Pilihan Menu (Bisa Scroll) --}}
+            <div class="flex flex-col gap-3 md:col-span-2 relative">
+                <label class="text-[10px] font-black text-[#332B2B] uppercase tracking-[0.2em] ml-1">Tambah Menu ke Predikat</label>
+                <button @click="if(editPredicate.kategori) menuOpen = !menuOpen" @click.away="menuOpen = false"
+                    :class="!editPredicate.kategori ? 'bg-[#FDFCFB] cursor-not-allowed opacity-50' : 'bg-white cursor-pointer'"
+                    class="w-full px-6 py-4 rounded-2xl border border-[#E6D5B8] flex justify-between items-center text-[#332B2B] font-bold text-sm shadow-sm">
+                    <span x-text="!editPredicate.kategori ? 'Tentukan kategori terlebih dahulu...' : 'Pilih menu untuk ditambahkan'"></span>
+                    <i class="fa-solid fa-plus text-[#332B2B]/30 text-xs"></i>
+                </button>
+
+                <div x-show="menuOpen" x-transition 
+                    class="absolute z-50 w-full mt-[85px] bg-white border border-[#E6D5B8] rounded-2xl shadow-xl overflow-hidden py-2 max-h-60 overflow-y-auto custom-scrollbar">
+                    <template x-for="menu in filteredMenus" :key="menu.nama">
+                        <button @click="addMenu(menu.nama)" 
+                            :disabled="selectedMenus.includes(menu.nama)"
+                            :class="selectedMenus.includes(menu.nama) ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[#332B2B] hover:text-[#E6D5B8]'"
+                            class="w-full text-left px-6 py-3 text-sm font-bold text-[#332B2B] transition flex justify-between items-center">
+                            <span x-text="menu.nama"></span>
+                            <i x-show="selectedMenus.includes(menu.nama)" class="fa-solid fa-check text-[10px]"></i>
+                        </button>
+                    </template>
                 </div>
             </div>
         </div>
 
-        <div class="mt-12 pt-10 border-t border-gray-50 flex flex-wrap gap-4">
-            <template x-for="(menuName, index) in selectedMenus" :key="index">
-                <div class="flex items-center gap-6 border border-gray-200 rounded-2xl px-6 py-3.5 bg-white shadow-sm group">
-                    <span class="text-sm font-semibold text-gray-700" x-text="menuName"></span>
-                    <button type="button" @click="removeMenu(index)" class="text-gray-400 hover:text-red-500 transition">
-                        <i class="fa-solid fa-xmark text-xs"></i>
-                    </button>
-                </div>
-            </template>
+        {{-- Section Badge Menu Terpilih --}}
+        <div class="mt-14 pt-10 border-t border-[#E6D5B8]/20 text-left">
+            <label class="text-[10px] font-black text-[#4A3F3F]/40 uppercase tracking-[0.2em] mb-6 block">Menu Terpilih (<span x-text="selectedMenus.length"></span>)</label>
+            
+            <div class="flex flex-wrap gap-4 min-h-[60px]">
+                <template x-for="(menuName, index) in selectedMenus" :key="index">
+                    <div class="flex items-center gap-4 border border-[#E6D5B8] rounded-2xl px-5 py-3 bg-[#FDFCFB] group animate-in fade-in zoom-in duration-300 hover:border-[#332B2B] transition-colors shadow-sm">
+                        <span class="text-xs font-bold text-[#332B2B]" x-text="menuName"></span>
+                        <button type="button" @click="removeMenu(index)" class="text-[#4A3F3F]/40 hover:text-red-500 transition border-none bg-transparent cursor-pointer">
+                            <i class="fa-solid fa-circle-xmark text-sm"></i>
+                        </button>
+                    </div>
+                </template>
+                <template x-if="selectedMenus.length === 0">
+                    <div class="w-full py-8 border-2 border-dashed border-[#E6D5B8]/30 rounded-3xl flex items-center justify-center">
+                        <p class="text-[#4A3F3F]/30 text-xs font-bold uppercase tracking-widest italic">Belum ada menu yang dikaitkan</p>
+                    </div>
+                </template>
+            </div>
         </div>
     </div>
 </div>

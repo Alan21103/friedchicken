@@ -1,12 +1,14 @@
 @extends('owner.layouts.layouts')
 
+@section('title', 'Kelola Predikat')
+
 @section('content')
 {{-- State Management Alpine.js --}}
 <div x-data="{ 
     predicates: [], 
     search: '',
-    openHapus: false, {{-- State untuk modal hapus --}}
-    deleteId: null,   {{-- Menyimpan ID yang akan dihapus --}}
+    openHapus: false,
+    deleteId: null,
     
     init() {
         const saved = localStorage.getItem('my_predicates');
@@ -23,13 +25,11 @@
         );
     },
 
-    // 1. Membuka modal konfirmasi kustom
     persiapanHapus(id) {
         this.deleteId = id;
         this.openHapus = true;
     },
 
-    // 2. Eksekusi hapus setelah konfirmasi di klik
     confirmHapus() {
         if (this.deleteId !== null) {
             this.predicates = this.predicates.filter(p => p.id !== this.deleteId);
@@ -41,58 +41,67 @@
 }" x-init="init()" x-cloak>
     
     {{-- Header --}}
-    <div class="mb-6 px-1 text-left">
-        <h1 class="text-2xl font-bold text-gray-800">List Predikat</h1>
-        <p class="text-sm text-gray-500 mt-0.5 font-medium">Tambah, ubah, atau hapus Predikat Menu</p>
+    <div class="mb-8 px-1 text-left">
+        <h1 class="text-2xl font-bold text-[#332B2B]">List Predikat</h1>
+        <p class="text-sm text-[#4A3F3F]/60 mt-0.5 font-medium">Tambah, ubah, atau hapus Predikat Menu</p>
     </div>
 
-    {{-- Toolbar Filter --}}
-    <div class="bg-[#ACB5BD] p-3 rounded-xl flex justify-between items-center mb-6 shadow-sm">
+    {{-- Toolbar Filter: Menggunakan warna Cream (#E6D5B8) --}}
+    <div class="bg-[#E6D5B8] p-4 rounded-2xl flex justify-between items-center mb-8 shadow-sm">
         <div class="relative w-80">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-gray-400">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-[#332B2B]/40">
                 <i class="fa-solid fa-magnifying-glass text-xs"></i>
             </span>
             <input type="text" x-model="search"
-                class="block w-full pl-10 pr-3 py-2 border-none rounded-lg text-sm bg-white placeholder-gray-400 focus:ring-2 focus:ring-gray-300 outline-none transition shadow-sm" 
+                class="block w-full pl-11 pr-4 py-2.5 border-none rounded-xl text-sm bg-white/80 placeholder-[#4A3F3F]/40 focus:ring-2 focus:ring-[#332B2B]/20 outline-none transition font-medium" 
                 placeholder="Cari ID, Nama, atau Kategori...">
         </div>
         
         <a href="{{ route('owner.predikat.create') }}" 
-           class="bg-white text-gray-800 font-bold py-2 px-6 rounded-lg text-sm hover:bg-gray-50 transition flex items-center gap-2 shadow-sm border-none decoration-none">
-            <i class="fa-solid fa-plus text-xs"></i>
+           class="bg-[#332B2B] text-[#E6D5B8] font-bold py-2.5 px-6 rounded-xl text-xs uppercase tracking-widest hover:bg-[#4A3F3F] transition flex items-center gap-2 shadow-md decoration-none">
+            <i class="fa-solid fa-plus text-[10px]"></i>
             Tambah Predikat
         </a>
     </div>
 
-    {{-- Table Section --}}
-    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+    {{-- Table Section: Minimalis & Elegant --}}
+    <div class="bg-white rounded-[2rem] shadow-sm border border-[#E6D5B8]/30 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
                 <thead>
-                    <tr class="text-[11px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-50">
-                        <th class="px-6 py-4">ID</th>
-                        <th class="px-6 py-4">PREDIKAT</th>
-                        <th class="px-6 py-4">KATEGORI</th>
-                        <th class="px-6 py-4">MENU</th>
-                        <th class="px-6 py-4 text-center">AKSI</th>
+                    <tr class="text-[10px] font-black text-[#4A3F3F]/40 uppercase tracking-[0.2em] border-b border-[#E6D5B8]/20">
+                        <th class="px-8 py-5">ID</th>
+                        <th class="px-8 py-5">PREDIKAT</th>
+                        <th class="px-8 py-5">KATEGORI</th>
+                        <th class="px-8 py-5">JUMLAH MENU</th>
+                        <th class="px-8 py-5 text-center">AKSI</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-50">
+                <tbody class="divide-y divide-[#E6D5B8]/10">
+                    <template x-if="filteredPredicates.length === 0">
+                        <tr>
+                            <td colspan="5" class="px-8 py-20 text-center">
+                                <p class="text-[#4A3F3F]/30 text-xs font-bold uppercase tracking-widest">Tidak ada data predikat ditemukan</p>
+                            </td>
+                        </tr>
+                    </template>
+
                     <template x-for="item in filteredPredicates" :key="item.id">
-                        <tr class="hover:bg-gray-50/50 transition duration-150">
-                            <td class="px-6 py-4 text-sm font-bold text-gray-700" x-text="'PR' + item.id"></td>
-                            <td class="px-6 py-4 text-sm text-gray-600 font-medium" x-text="item.nama"></td>
-                            <td class="px-6 py-4 text-sm text-gray-600 font-medium" x-text="item.kategori"></td>
-                            <td class="px-6 py-4 text-sm text-gray-600 font-medium" x-text="item.menus.length + ' Menu'"></td>
-                            <td class="px-6 py-4">
-                                <div class="flex justify-center gap-2">
+                        <tr class="hover:bg-[#FDFCFB] transition-colors duration-200">
+                            <td class="px-8 py-5 text-sm font-black text-[#332B2B]" x-text="'PR' + item.id"></td>
+                            <td class="px-8 py-5 text-sm">
+                                <span class="bg-[#E6D5B8]/30 text-[#332B2B] px-3 py-1 rounded-lg font-bold text-xs border border-[#E6D5B8]/50" x-text="item.nama"></span>
+                            </td>
+                            <td class="px-8 py-5 text-sm text-[#4A3F3F] font-semibold" x-text="item.kategori"></td>
+                            <td class="px-8 py-5 text-sm text-[#4A3F3F]/60 font-medium" x-text="item.menus.length + ' Produk'"></td>
+                            <td class="px-8 py-5">
+                                <div class="flex justify-center gap-3">
                                     <a :href="'/owner/predikat/' + item.id + '/edit'" 
-                                       class="px-6 py-1.5 bg-[#8E959D] text-white text-[11px] font-bold rounded-lg hover:bg-gray-600 transition shadow-sm text-center decoration-none">
+                                       class="px-5 py-2 bg-[#E6D5B8]/40 text-[#332B2B] text-[11px] font-bold rounded-xl hover:bg-[#332B2B] hover:text-[#E6D5B8] transition shadow-sm text-center decoration-none">
                                         Ubah
                                     </a>
-                                    {{-- Tombol Hapus Sekarang Membuka Modal --}}
                                     <button @click="persiapanHapus(item.id)" 
-                                            class="px-6 py-1.5 bg-[#8E959D] text-white text-[11px] font-bold rounded-lg hover:bg-red-500 transition shadow-sm border-none active:scale-95 cursor-pointer">
+                                            class="px-5 py-2 bg-red-50 text-red-400 text-[11px] font-bold rounded-xl hover:bg-red-500 hover:text-white transition shadow-sm border-none active:scale-95 cursor-pointer">
                                         Hapus
                                     </button>
                                 </div>
@@ -104,24 +113,27 @@
         </div>
     </div>
 
-    {{-- MODAL HAPUS PREDIKAT (Desain Disamakan dengan Kelola Menu) --}}
+    {{-- MODAL HAPUS PREDIKAT --}}
     <div x-show="openHapus" 
          class="fixed inset-0 z-[110] flex items-center justify-center p-4"
          x-transition.opacity x-cloak>
         
-        {{-- Backdrop --}}
-        <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" @click="openHapus = false"></div>
+        {{-- Backdrop dengan Blur --}}
+        <div class="absolute inset-0 bg-[#332B2B]/60 backdrop-blur-sm" @click="openHapus = false"></div>
 
         {{-- Content Modal --}}
-        <div class="bg-gray-100 w-full max-w-sm rounded-[1.5rem] shadow-xl relative z-10 overflow-hidden px-8 py-10 text-center border-none">
-            <h3 class="text-xl font-bold text-gray-900 mb-4">Hapus Predikat</h3>
-            <p class="text-gray-700 mb-8 font-medium">Yakin untuk menghapus Predikat?</p>
+        <div class="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl relative z-10 overflow-hidden px-8 py-12 text-center border-none">
+            <div class="w-20 h-20 bg-red-50 text-red-400 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+                <i class="fa-solid fa-trash-can text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-black text-[#332B2B] mb-2 tracking-tight">Hapus Predikat?</h3>
+            <p class="text-[#4A3F3F]/60 mb-10 text-sm font-medium leading-relaxed px-4">Tindakan ini akan menghapus label predikat dari menu-menu terkait.</p>
             
-            <div class="flex justify-center gap-4">
-                <button @click="openHapus = false" class="px-8 py-2.5 bg-[#8E959D] text-white rounded-lg text-sm font-bold hover:bg-gray-500 transition active:scale-95 shadow-sm border-none outline-none">
+            <div class="flex justify-center gap-3">
+                <button @click="openHapus = false" class="flex-1 py-3.5 bg-white border border-[#E6D5B8] text-[#4A3F3F] rounded-xl text-[11px] font-black uppercase tracking-widest transition hover:bg-[#FDFCFB]">
                     Batal
                 </button>
-                <button @click="confirmHapus()" class="px-8 py-2.5 bg-[#8E959D] text-white rounded-lg text-sm font-bold hover:bg-red-500 transition active:scale-95 shadow-sm border-none outline-none">
+                <button @click="confirmHapus()" class="flex-1 py-3.5 bg-red-500 text-white rounded-xl text-[11px] font-black uppercase tracking-widest transition shadow-lg shadow-red-200">
                     Hapus
                 </button>
             </div>
